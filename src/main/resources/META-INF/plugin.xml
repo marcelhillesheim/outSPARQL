@@ -1,0 +1,25 @@
+<idea-plugin>
+    <id>org.sparqler.SPARQLer</id>
+    <name>Plugin display name here</name>
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="SPARQL" implementationClass="language.SparqlFileType"
+                  fieldName="INSTANCE" language="Sparql" extensions="sparql"/>
+        <lang.parserDefinition language="Sparql"
+                               implementationClass="language.SparqlParserDefinition"/>
+    </extensions>
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+</idea-plugin>
