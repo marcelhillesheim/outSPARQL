@@ -13,10 +13,12 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="SPARQL" implementationClass="language.SparqlFileType"
+        <fileType name="Sparql File" implementationClass="language.SparqlFileType"
                   fieldName="INSTANCE" language="Sparql" extensions="sparql"/>
         <lang.parserDefinition language="Sparql"
                                implementationClass="language.SparqlParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="Sparql"
+                                       implementationClass="language.SparqlSyntaxHighlighterFactory"/>
     </extensions>
     <actions>
         <!-- Add your actions here -->
