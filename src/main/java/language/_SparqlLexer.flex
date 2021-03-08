@@ -81,48 +81,118 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
 %x PNAME_LN
 %x PNAME_LN2
 
-%x IRI_REF_BODY
-%x IRI_REF_END
+
 
 %%
 
 <YYINITIAL> {
-//  [bB][aA][sS][eE] { return KW_BASE; }
-//  [pP][rR][eE][fF][iI][xX] { return KW_PREFIX; }
-//  [sS][eE][lL][eE][cC][tT] { return KW_SELECT; }
-//  [cC][oO][nN][sS][tT][rR][uU][cC][tT] { return KW_CONSTRUCT; }
-//  [dD][eE][sS][cC][rR][iI][bB][eE] { return KW_DESCRIBE; }
-//  [aA][sS][kK] { return KW_ASK; }
-//  [oO][rR][dD][eE][rR] { return KW_ORDER; }
-//  [bB][yY] { return KW_BY; }
-//  [aA][sS][kK] { return KW_ASK; }
-//  [dD][eE][sS][cC] { return KW_DESC; }
-//  [lL][iI][mM][iI][tT] { return KW_LIMIT; }
-//  [oO][fF][fF][sS][eE][tT] { return KW_OFFSET; }
-//  [dD][iI][sS][tT][iI][nN][cC][tT] { return KW_DISTINCT; }
-//  [rR][eE][dD][uU][cC][eE][dD] { return KW_REDUCED; }
-//  [fF][rR][oO][mM] { return KW_FROM; }
-//  [nN][aA][mM][eE][dD] { return KW_NAMED; }
-//  [wW][hH][eE][rR][eE] { return KW_WHERE; }
-//  [gG][rR][aA][pP][hH] { return KW_GRAPH; }
-//  [oO][pP][tT][iI][oO][nN][aA][lL] { return KW_OPTIONAL; }
-//  [uU][nN][iI][oO][nN] { return KW_UNION; }
-//  [fF][iI][lL][tT][eE][rR] { return KW_FILTER; }
-//  "a" { return KW_A; }
-//  [sS][tT][rR] { return KW_STR; }
-//  [lL][aA][nN][gG] { return KW_LANG; }
-//  [lL][aA][nN][gG][mM][sA][tT][cC][hH][eE][sS] { return KW_LANGMATCHES; }
-//  [dD][aA][tT][aA][tT][yY][pP][eE] { return KW_DATATYPE; }
-//  [bB][oO][uU][nN][dD] { return KW_BOUND; }
-//  [sS][aA][mM][eE][tT][eE][rR][mM] { return KW_SAME_TERM; }
-//  [iI][sS][uU][rR][iI] { return KW_IS_URI; }
-//  [iI][sS][iI][rR][iI] { return KW_IS_IRI; }
-//  [iI][sS][bB][lL][aA][nN][kK] { return KW_IS_BLANK; }
-//  [iI][sS][lL][iI][tT][eE][rR][aA][lL] { return KW_IS_LITERAL; }
-//  [rR][eE][gG][eE][xX] { return KW_REGEX; }
-//
-//  [tT][rR][uU][eE] { return LIT_TRUE; }
-//  [fF][aA][lL][sS][eE] { return LIT_FALSE; }
+//TODO
+BASE { return KW_BASE; }
+PREFIX { return KW_PREFIX; }
+SELECT { return KW_SELECT; }
+CONSTRUCT { return KW_CONSTRUCT; }
+DESCRIBE { return KW_DESCRIBE; }
+ASK { return KW_ASK; }
+ORDER { return KW_ORDER; }
+BY { return KW_BY; }
+AS { return KW_AS; }
+DESC { return KW_DESC; }
+LIMIT { return KW_LIMIT; }
+OFFSET { return KW_OFFSET; }
+DISTINCT { return KW_DISTINCT; }
+REDUCED { return KW_REDUCED; }
+FROM { return KW_FROM; }
+NAMED { return KW_NAMED; }
+WHERE { return KW_WHERE; }
+GRAPH { return KW_GRAPH; }
+OPTIONAL { return KW_OPTIONAL; }
+UNION { return KW_UNION; }
+FILTER { return KW_FILTER; }
+"a" { return KW_A; }
+STR { return KW_STR; }
+LANG { return KW_LANG; }
+LANGMATCHES { return KW_LANGMATCHES; }
+DATATYPE { return KW_DATATYPE; }
+BOUND { return KW_BOUND; }
+sameTerm { return KW_SAME_TERM; }
+isURI { return KW_IS_URI; }
+isIRI { return KW_IS_IRI; }
+isBLANK { return KW_IS_BLANK; }
+isLITERAL { return KW_IS_LITERAL; }
+isNUMERIC { return KW_IS_NUMERIC; }
+REGEX { return KW_REGEX; }
+GROUP { return KW_GROUP; }
+HAVING { return KW_HAVING; }
+ASC { return KW_ASC; }
+VALUES { return KW_VALUES; }
+LOAD { return KW_LOAD; }
+SILENT { return KW_SILENT; }
+INTO { return KW_INTO; }
+CLEAR { return KW_CLEAR; }
+DROP { return KW_DROP; }
+CREATE { return KW_CREATE; }
+ADD { return KW_ADD; }
+TO { return KW_TO; }
+MOVE { return KW_MOVE; }
+COPY { return KW_COPY; }
+WITH { return KW_WITH; }
+DELETE { return KW_DELETE; }
+INSERT { return KW_INSERT; }
+USING { return KW_USING; }
+NAMED { return KW_NAMED; }
+DEFAULT { return KW_DEFAULT; }
+ALL { return KW_ALL; }
+SERVICE { return KW_SERVICE; }
+BIND { return KW_BIND; }
+UNDEF { return KW_UNDEF; }
+MINUS { return KW_MINUS; }
+IN { return KW_IN; }
+NOT { return KW_NOT; }
+IRI { return KW_IRI; }
+URI { return KW_URI; }
+BNODE { return KW_BNODE; }
+RAND { return KW_RAND; }
+ABS { return KW_ABS; }
+CEIL { return KW_CEIL; }
+FLOOR { return KW_FLOOR; }
+ROUND { return KW_ROUND; }
+CONCAT { return KW_CONCAT; }
+STRLEN { return KW_STRLEN; }
+UCASE { return KW_UCASE; }
+LCASE { return KW_LCASE; }
+CONTAINS { return KW_CONTAINS; }
+STRSTARTS { return KW_STRSTARTS; }
+STRENDS { return KW_STRENDS; }
+STRBEFORE { return KW_STRBEFORE; }
+STRAFTER { return KW_STRAFTER; }
+YEAR { return KW_YEAR; }
+MONTH { return KW_MONTH; }
+DAY { return KW_DAY; }
+HOURS { return KW_HOURS; }
+MINUTES { return KW_MINUTES; }
+SECONDS { return KW_SECONDS; }
+TIMEZONE { return KW_TIMEZONE; }
+TZ { return KW_TZ; }
+NOW { return KW_NOW; }
+UUID { return KW_UUID; }
+STRUUID { return KW_STRUUID; }
+COALESCE { return KW_COALESCE; }
+IF { return KW_IF; }
+STRLANG { return KW_STRLANG; }
+STRDT { return KW_STRDT; }
+SUBSTR { return KW_SUBSTR; }
+REPLACE { return KW_REPLACE; }
+EXISTS { return KW_EXISTS; }
+COUNT { return KW_COUNT; }
+SUM { return KW_SUM; }
+MIN { return KW_MIN; }
+MAX { return KW_MAX; }
+AVG { return KW_AVG; }
+SAMPLE { return KW_SAMPLE; }
+SEPARATOR { return KW_SEPARATOR; }
+
+true { return LIT_TRUE; }
+false { return LIT_FALSE; }
 
   {INTEGER} { return INTEGER; }
   {DECIMAL} { return DECIMAL; }
@@ -162,12 +232,14 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
   {PNAME_LN} { return SparqlTypes.PNAME_LN; }
   {PNAME_NS} { return SparqlTypes.PNAME_NS; }
   {BLANK_NODE_LABEL} { return BLANK_NODE; }
+
   {ANON} { return ANON; }
   {NIL} { return NIL; }
-  {LANGTAG} { return LANGTAG; }
 
+  {LANGTAG} { return LANGTAG; }
   {VAR1} { return VAR1; }
   {VAR2} { return VAR2; }
+
   {STRING_LITERAL1} { return STRING_LITERAL1; }
   {STRING_LITERAL2} { return STRING_LITERAL2; }
   {STRING_LITERAL_LONG1} { return STRING_LITERAL_LONG1; }
