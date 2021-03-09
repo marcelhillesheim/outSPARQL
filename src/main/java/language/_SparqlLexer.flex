@@ -59,6 +59,7 @@ ECHAR = [\\][tbnrf\\\"\']
 NIL = "("{WS}*")"
 WS = [\x20\x09\x0D\x0A]
 ANON = "["{WS}*"]"
+LINE_COMMENT= "#" .*
 
 //TODO [#x10000-#xEFFFF]
 PN_CHARS_BASE = [A-Za-z\u00C0-\u00D6\u00DB-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]
@@ -245,8 +246,8 @@ false { return LIT_FALSE; }
   {STRING_LITERAL_LONG1} { return STRING_LITERAL_LONG1; }
   {STRING_LITERAL_LONG2} { return STRING_LITERAL_LONG2; }
 
-  //TODO  '#', outside an IRI or string, and continue to the end of line (marked by characters 0x0D or 0x0A)
-  // "#".* { return COMMENT; }
+  //  '#', outside an IRI or string, and continue to the end of line (marked by characters 0x0D or 0x0A)
+  {LINE_COMMENT} {return LINE_COMMENT; }
 }
 
 {WS} { return WHITE_SPACE; }

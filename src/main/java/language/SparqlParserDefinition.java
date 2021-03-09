@@ -16,10 +16,12 @@ import language.psi.SparqlFile;
 import language.psi.SparqlTypes;
 import org.jetbrains.annotations.NotNull;
 
+import static language.psi.SparqlTypes.LINE_COMMENT;
+
 public class SparqlParserDefinition implements ParserDefinition {
 
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
-    public static final TokenSet COMMENTS = TokenSet.EMPTY;
+    public static final TokenSet COMMENTS = TokenSet.create(LINE_COMMENT);
 
     public static final IFileElementType FILE = new IFileElementType(SparqlLanguage.INSTANCE);
 

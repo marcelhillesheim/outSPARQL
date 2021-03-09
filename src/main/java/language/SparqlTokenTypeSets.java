@@ -10,12 +10,19 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
  * Sets of token types for easy use.
  *
  * @author Matt Nathan
+ *
+ * source:SPARQL4IDEA
+ * modified by
+ *
+ * @author Marcel Hillesheim
  */
 public interface SparqlTokenTypeSets {
 
     //TODO comments
-    TokenSet COMMENTS = TokenSet.EMPTY;
+    //TokenSet COMMENTS = TokenSet.EMPTY;
+    TokenSet COMMENTS = TokenSet.create(LINE_COMMENT);
     TokenSet WHITESPACE = TokenSet.create(WHITE_SPACE);
+    TokenSet VARIABLES = TokenSet.create(VAR1, VAR2);
     TokenSet STRING_LITERALS = TokenSet.create(STRING_LITERAL1, STRING_LITERAL2, STRING_LITERAL_LONG1, STRING_LITERAL_LONG2);
     TokenSet NUMBER_LITERALS = TokenSet.create(INTEGER, DECIMAL, DOUBLE, INTEGER_NEGATIVE, INTEGER_POSITIVE,
             DECIMAL_NEGATIVE, DECIMAL_POSITIVE, DOUBLE_NEGATIVE, DOUBLE_POSITIVE);
