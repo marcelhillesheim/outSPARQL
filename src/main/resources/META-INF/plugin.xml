@@ -20,6 +20,11 @@
         <lang.syntaxHighlighterFactory language="Sparql"
                                        implementationClass="language.SparqlSyntaxHighlighterFactory"/>
         <toolWindow id="SPARQL Execution" anchor="bottom" secondary="false" factoryClass="ui.QueryExecutionToolWindowFactory"/>
+        <applicationService serviceImplementation="settings.SparqlAppSettingsManager"/>
+        <applicationConfigurable parentId="tools" instance="settings.SparqlAppSettingsConfigurable"
+                                 id="settings.SparqlAppSettingsConfigurable"
+                                 displayName="SPARQL settings"/>
+
     </extensions>
     <actions>
         <!-- Add your actions here -->
