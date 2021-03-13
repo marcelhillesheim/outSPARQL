@@ -28,7 +28,7 @@ public class SparqlExecutionEndpointAction extends AnAction implements CustomCom
         comboBox.addItem(settings.endpointSettingsForExecution);
         comboBox.setSelectedItem(settings.endpointSettingsForExecution);
 
-
+        //TODO only reload list if list changed as the selected item is overwritten.
 
         // add listeners
         // reload list when popup menu is opened in case a new endpoint was added via settings
