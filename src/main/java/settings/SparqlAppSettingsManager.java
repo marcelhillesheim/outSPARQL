@@ -24,7 +24,7 @@ import java.util.List;
 )
 public class SparqlAppSettingsManager implements PersistentStateComponent<SparqlAppSettingsManager> {
 
-    public List<SparqlEndpointSettings> endpointSettings = new ArrayList<>();
+    public List<SparqlEndpointSettings> endpointSettingsList = new ArrayList<>();
 
     public static SparqlAppSettingsManager getInstance() {
         return ServiceManager.getService(SparqlAppSettingsManager.class);

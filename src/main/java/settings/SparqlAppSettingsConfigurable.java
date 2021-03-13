@@ -9,7 +9,7 @@ import ui.SparqlSettingsDialog;
 import javax.swing.*;
 
 public class SparqlAppSettingsConfigurable implements Configurable {
-
+    private  SparqlSettingsDialog dialog;
     @Override
     public @NlsContexts.ConfigurableName String getDisplayName() {
         return null;
@@ -17,17 +17,17 @@ public class SparqlAppSettingsConfigurable implements Configurable {
 
     @Override
     public @Nullable JComponent createComponent() {
-        SparqlSettingsDialog dialog = new SparqlSettingsDialog();
+        dialog = new SparqlSettingsDialog();
         return (JComponent) dialog.getRootPanel();
     }
 
     @Override
     public boolean isModified() {
-        return false;
+        return dialog.isModified();
     }
 
     @Override
     public void apply() throws ConfigurationException {
-
+        dialog.apply();
     }
 }

@@ -9,9 +9,8 @@ public class SparqlEndpointSettings {
 
     }
 
-    public SparqlEndpointSettings(String name, String url) {
+    public SparqlEndpointSettings(String name) {
         this.name = name;
-        this.url = url;
     }
 
     public String getName() {
