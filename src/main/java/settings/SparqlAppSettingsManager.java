@@ -17,7 +17,7 @@ import java.util.List;
  * The {@link State} and {@link Storage} annotations define the name of the data and the file name where
  * these persistent application settings are stored.
  */
-//TODO remove 2. Had to change cause the original file got compromised
+
 @State(
         name = "SparqlAppSettings",
         storages = {@Storage("SparqlPluginAppSettings.xml")}
@@ -25,6 +25,8 @@ import java.util.List;
 public class SparqlAppSettingsManager implements PersistentStateComponent<SparqlAppSettingsManager> {
 
     public List<SparqlEndpointSettings> endpointSettingsList = new ArrayList<>();
+
+    public SparqlEndpointSettings endpointSettingsForExecution = new SparqlEndpointSettings();
 
     public static SparqlAppSettingsManager getInstance() {
         return ServiceManager.getService(SparqlAppSettingsManager.class);

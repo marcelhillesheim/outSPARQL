@@ -17,12 +17,16 @@ import com.intellij.ui.content.Content;
 import language.psi.SparqlQuery;
 import language.psi.SparqlVisitor;
 import org.jetbrains.annotations.NotNull;
+import settings.SparqlAppSettingsManager;
+import settings.SparqlEndpointSettings;
 import ui.QueryExecutionToolWindow;
 
 public class SparqlExecutionAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        SparqlEndpointSettings settings = SparqlAppSettingsManager.getInstance().endpointSettingsForExecution;
+
         //TODO currently only getting window with cursor in it
         //getting current opened file
         PsiFile currentFile  = e.getData(CommonDataKeys.PSI_FILE);
@@ -46,7 +50,7 @@ public class SparqlExecutionAction extends AnAction {
         SparqlQuery queryElement = PsiTreeUtil.findChildOfType(currentFile.getNode().getPsi(), SparqlQuery.class);
         if (queryElement.getSelectQuery() != null){
             System.out.println(currentFile.getText());
-            SparqlSelectExecution exec = new SparqlSelectExecution(currentFile.getOriginalFile().getNode().getPsi().getText());
+            SparqlSelectExecution exec = new SparqlSelectExecution(currentFile.getOriginalFile().getNode().getPsi().getText(), settings.getUrl());
             exec.run();
             queryExecutionToolWindow.setResultContent(exec.generateJBTable());
         } else {
