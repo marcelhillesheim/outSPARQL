@@ -31,16 +31,7 @@
         </constraints>
         <properties/>
         <border type="none"/>
-        <children>
-          <component id="ddd40" class="javax.swing.JComboBox" binding="endpointSelectionDropDown">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="9" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <model/>
-            </properties>
-          </component>
-        </children>
+        <children/>
       </grid>
     </children>
   </grid>

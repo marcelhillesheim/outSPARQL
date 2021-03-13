@@ -27,7 +27,6 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
     private JPanel content;
     private JScrollPane resultPanel;
     private JTable table1;
-    private JComboBox endpointSelectionDropDown;
 
     public QueryExecutionToolWindow(ToolWindow toolWindow) {
         super(true, true);
