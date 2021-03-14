@@ -20,6 +20,10 @@ public interface SparqlTokenTypeSets {
 
     TokenSet COMMENTS = TokenSet.create(LINE_COMMENT);
     TokenSet WHITESPACE = TokenSet.create(WHITE_SPACE);
+    TokenSet PARANTHESES = TokenSet.create(OP_LROUND, OP_RROUND);
+    TokenSet BRACES = TokenSet.create(OP_LCURLY, OP_RCURLY);
+    TokenSet BRACKETS = TokenSet.create(OP_LSQUARE, OP_RSQUARE);
+
     TokenSet VARIABLES = TokenSet.create(VAR1, VAR2);
     TokenSet STRING_LITERALS = TokenSet.create(STRING_LITERAL1, STRING_LITERAL2, STRING_LITERAL_LONG1, STRING_LITERAL_LONG2);
     TokenSet NUMBER_LITERALS = TokenSet.create(INTEGER, DECIMAL, DOUBLE, INTEGER_NEGATIVE, INTEGER_POSITIVE,

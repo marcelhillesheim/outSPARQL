@@ -36,7 +36,12 @@ public class SparqlSyntaxHighlighter extends SyntaxHighlighterBase {
     static {
         // setup the styles
         ATTRIBUTES.put(BAD_CHARACTER, HighlighterColors.BAD_CHARACTER);
-        ATTRIBUTES.put(WHITE_SPACE, HighlighterColors.TEXT);
+        fillMap(ATTRIBUTES, SparqlTokenTypeSets.WHITESPACE, HighlighterColors.TEXT);
+
+        fillMap(ATTRIBUTES, SparqlTokenTypeSets.PARANTHESES, DefaultLanguageHighlighterColors.PARENTHESES);
+        fillMap(ATTRIBUTES, SparqlTokenTypeSets.BRACES, DefaultLanguageHighlighterColors.BRACES);
+        fillMap(ATTRIBUTES, SparqlTokenTypeSets.BRACKETS, DefaultLanguageHighlighterColors.BRACKETS);
+
         fillMap(ATTRIBUTES, SparqlTokenTypeSets.VARIABLES, DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
 
         fillMap(ATTRIBUTES, SparqlTokenTypeSets.KEYWORDS, DefaultLanguageHighlighterColors.KEYWORD);
