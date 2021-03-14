@@ -22,6 +22,8 @@
 //TODO test pins (highlighting)
 // pin explanation https://stackoverflow.com/questions/48701510/pin-recoverwhile-in-a-bnf-parsing
 
+// added new root element to the bnf grammar. Otherwise the updateunit is unreachable.
+Root    ::= QueryUnit | UpdateUnit
 
 QueryUnit	  ::=  	Query
 Query	  ::=  	Prologue
@@ -33,9 +35,9 @@ BaseDecl	  ::=  	KW_BASE IRIREF {pin=1}
 PrefixDecl	  ::=  	KW_PREFIX PNAME_NS IRIREF {pin=1}
 SelectQuery	  ::=  	SelectClause DatasetClause* WhereClause SolutionModifier
 SubSelect	  ::=  	SelectClause WhereClause SolutionModifier ValuesClause
-SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( '(' Expression KW_AS Var ')' ) )+ | '*' ) {pin=1}
-ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE '{' TriplesTemplate? '}' SolutionModifier ) {pin=1}
-DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | '*' ) DatasetClause* WhereClause? SolutionModifier {pin=1}
+SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( OP_LROUND Expression KW_AS Var OP_RROUND ) )+ | OP_MULT ) {pin=1}
+ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE OP_LCURLY TriplesTemplate? OP_RCURLY SolutionModifier ) {pin=1}
+DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | OP_MULT ) DatasetClause* WhereClause? SolutionModifier {pin=1}
 AskQuery	  ::=  	KW_ASK DatasetClause* WhereClause SolutionModifier {pin=1}
 DatasetClause	  ::=  	KW_FROM ( DefaultGraphClause | NamedGraphClause ) {pin=1}
 DefaultGraphClause	  ::=  	SourceSelector
@@ -44,7 +46,7 @@ SourceSelector	  ::=  	iri
 WhereClause	  ::=  	KW_WHERE? GroupGraphPattern
 SolutionModifier	  ::=  	GroupClause? HavingClause? OrderClause? LimitOffsetClauses?
 GroupClause	  ::=  	KW_GROUP KW_BY GroupCondition+ {pin=1}
-GroupCondition	  ::=  	BuiltInCall | FunctionCall | '(' Expression ( KW_AS Var )? ')' | Var
+GroupCondition	  ::=  	BuiltInCall | FunctionCall | OP_LROUND Expression ( KW_AS Var )? OP_RROUND | Var
 HavingClause	  ::=  	KW_HAVING HavingCondition+ {pin=1}
 HavingCondition	  ::=  	Constraint
 OrderClause	  ::=  	KW_ORDER KW_BY OrderCondition+ {pin=1}
@@ -56,7 +58,7 @@ OffsetClause	  ::=  	KW_OFFSET INTEGER {pin=1}
 ValuesClause	  ::=  	( KW_VALUES DataBlock )?
 //TODO pin rest of file
 //TODO root
-Update	  ::=  	Prologue ( Update1 ( ';' Update )? )?
+Update	  ::=  	Prologue ( Update1 ( OP_SEMI Update )? )?
 Update1	  ::=  	Load | Clear | Drop | Add | Move | Copy | Create | InsertData | DeleteData | DeleteWhere | Modify
 Load	  ::=  	KW_LOAD KW_SILENT? iri ( KW_INTO GraphRef )?
 Clear	  ::=  	KW_CLEAR KW_SILENT? GraphRefAll
@@ -75,70 +77,70 @@ UsingClause	  ::=  	KW_USING ( iri | KW_NAMED iri )
 GraphOrDefault	  ::=  	KW_DEFAULT | KW_GRAPH? iri
 GraphRef	  ::=  	KW_GRAPH iri
 GraphRefAll	  ::=  	GraphRef | KW_DEFAULT | KW_NAMED | KW_ALL
-QuadPattern	  ::=  	'{' Quads '}'
-QuadData	  ::=  	'{' Quads '}'
-Quads	  ::=  	TriplesTemplate? ( QuadsNotTriples '.'? TriplesTemplate? )*
-QuadsNotTriples	  ::=  	KW_GRAPH VarOrIri '{' TriplesTemplate? '}'
-TriplesTemplate	  ::=  	TriplesSameSubject ( '.' TriplesTemplate? )?
-GroupGraphPattern	  ::=  	'{' ( SubSelect | GroupGraphPatternSub ) '}'
-GroupGraphPatternSub	  ::=  	TriplesBlock? ( GraphPatternNotTriples '.'? TriplesBlock? )*
+QuadPattern	  ::=  	OP_LCURLY Quads OP_RCURLY
+QuadData	  ::=  	OP_LCURLY Quads OP_RCURLY
+Quads	  ::=  	TriplesTemplate? ( QuadsNotTriples OP_DOT? TriplesTemplate? )*
+QuadsNotTriples	  ::=  	KW_GRAPH VarOrIri OP_LCURLY TriplesTemplate? OP_RCURLY
+TriplesTemplate	  ::=  	TriplesSameSubject ( OP_DOT TriplesTemplate? )?
+GroupGraphPattern	  ::=  	OP_LCURLY ( SubSelect | GroupGraphPatternSub ) OP_RCURLY
+GroupGraphPatternSub	  ::=  	TriplesBlock? ( GraphPatternNotTriples OP_DOT? TriplesBlock? )*
 //Todo recover
-TriplesBlock	  ::=  	TriplesSameSubjectPath ( '.' TriplesBlock? )?
+TriplesBlock	  ::=  	TriplesSameSubjectPath ( OP_DOT TriplesBlock? )?
 GraphPatternNotTriples	  ::=  	GroupOrUnionGraphPattern | OptionalGraphPattern | MinusGraphPattern | GraphGraphPattern | ServiceGraphPattern | Filter | Bind | InlineData
 OptionalGraphPattern	  ::=  	KW_OPTIONAL GroupGraphPattern
 GraphGraphPattern	  ::=  	KW_GRAPH VarOrIri GroupGraphPattern
 ServiceGraphPattern	  ::=  	KW_SERVICE KW_SILENT? VarOrIri GroupGraphPattern
-Bind	  ::=  	KW_BIND '(' Expression KW_AS Var ')'
+Bind	  ::=  	KW_BIND OP_LROUND Expression KW_AS Var OP_RROUND
 InlineData	  ::=  	KW_VALUES DataBlock
 DataBlock	  ::=  	InlineDataOneVar | InlineDataFull
-InlineDataOneVar	  ::=  	Var '{' DataBlockValue* '}'
-InlineDataFull	  ::=  	( NIL | '(' Var* ')' ) '{' ( '(' DataBlockValue* ')' | NIL )* '}'
+InlineDataOneVar	  ::=  	Var OP_LCURLY DataBlockValue* OP_RCURLY
+InlineDataFull	  ::=  	( NIL | OP_LROUND Var* OP_RROUND ) OP_LCURLY ( OP_LROUND DataBlockValue* OP_RROUND | NIL )* OP_RCURLY
 DataBlockValue	  ::=  	iri | RDFLiteral | NumericLiteral | BooleanLiteral | KW_UNDEF
 MinusGraphPattern	  ::=  	KW_MINUS GroupGraphPattern
 GroupOrUnionGraphPattern	  ::=  	GroupGraphPattern ( KW_UNION GroupGraphPattern )*
 Filter	  ::=  	KW_FILTER Constraint
 Constraint	  ::=  	BrackettedExpression | BuiltInCall | FunctionCall
 FunctionCall	  ::=  	iri ArgList
-ArgList	  ::=  	NIL | '(' KW_DISTINCT? Expression ( ',' Expression )* ')'
-ExpressionList	  ::=  	NIL | '(' Expression ( ',' Expression )* ')'
-ConstructTemplate	  ::=  	'{' ConstructTriples? '}'
-ConstructTriples	  ::=  	TriplesSameSubject ( '.' ConstructTriples? )?
+ArgList	  ::=  	NIL | OP_LROUND KW_DISTINCT? Expression ( OP_COMMA Expression )* OP_RROUND
+ExpressionList	  ::=  	NIL | OP_LROUND Expression ( OP_COMMA Expression )* OP_RROUND
+ConstructTemplate	  ::=  	OP_LCURLY ConstructTriples? OP_RCURLY
+ConstructTriples	  ::=  	TriplesSameSubject ( OP_DOT ConstructTriples? )?
 //TODO recover for quad
 TriplesSameSubject	  ::=  	VarOrTerm PropertyListNotEmpty | TriplesNode PropertyList
 PropertyList	  ::=  	PropertyListNotEmpty?
 //TODO recover after new line ("." ";")
-PropertyListNotEmpty	  ::=  	Verb ObjectList ( ';' ( Verb ObjectList )? )*
+PropertyListNotEmpty	  ::=  	Verb ObjectList ( OP_SEMI ( Verb ObjectList )? )*
 Verb	  ::=  	VarOrIri | KW_A
-ObjectList	  ::=  	Object ( ',' Object )*
+ObjectList	  ::=  	Object ( OP_COMMA Object )*
 Object	  ::=  	GraphNode
 //TODO recover
 TriplesSameSubjectPath	  ::=  	VarOrTerm PropertyListPathNotEmpty | TriplesNodePath PropertyListPath
 PropertyListPath	  ::=  	PropertyListPathNotEmpty?
 
 //TODO recover after new line ("." ";")
-PropertyListPathNotEmpty	  ::=  	( VerbPath | VerbSimple ) ObjectListPath ( ';' ( ( VerbPath | VerbSimple ) ObjectListPath )? )*
+PropertyListPathNotEmpty	  ::=  	( VerbPath | VerbSimple ) ObjectListPath ( OP_SEMI ( ( VerbPath | VerbSimple ) ObjectListPath )? )*
 
 VerbPath	  ::=  	Path
 VerbSimple	  ::=  	Var
-ObjectListPath	  ::=  	ObjectPath ( ',' ObjectPath )*
+ObjectListPath	  ::=  	ObjectPath ( OP_COMMA ObjectPath )*
 ObjectPath	  ::=  	GraphNodePath
 Path	  ::=  	PathAlternative
 PathAlternative	  ::=  	PathSequence ( '|' PathSequence )*
-PathSequence	  ::=  	PathEltOrInverse ( '/' PathEltOrInverse )*
+PathSequence	  ::=  	PathEltOrInverse ( OP_DIV PathEltOrInverse )*
 PathElt	  ::=  	PathPrimary PathMod?
 PathEltOrInverse	  ::=  	PathElt | '^' PathElt
-PathMod	  ::=  	'?' | '*' | '+'
-PathPrimary	  ::=  	iri | KW_A | '!' PathNegatedPropertySet | '(' Path ')'
-PathNegatedPropertySet	  ::=  	PathOneInPropertySet | '(' ( PathOneInPropertySet ( '|' PathOneInPropertySet )* )? ')'
+PathMod	  ::=  	'?' | OP_MULT | OP_PLUS
+PathPrimary	  ::=  	iri | KW_A | OP_NOT PathNegatedPropertySet | OP_LROUND Path OP_RROUND
+PathNegatedPropertySet	  ::=  	PathOneInPropertySet | OP_LROUND ( PathOneInPropertySet ( '|' PathOneInPropertySet )* )? OP_RROUND
 PathOneInPropertySet	  ::=  	iri | KW_A | '^' ( iri | KW_A )
 //TODO name conflict --> added Lit_ --> could lead to conflicts if grammar gets updated
 Lit_Integer	  ::=  	INTEGER
 TriplesNode	  ::=  	Collection | BlankNodePropertyList
-BlankNodePropertyList	  ::=  	'[' PropertyListNotEmpty ']'
+BlankNodePropertyList	  ::=  	OP_LSQUARE PropertyListNotEmpty OP_RSQUARE
 TriplesNodePath	  ::=  	CollectionPath | BlankNodePropertyListPath
-BlankNodePropertyListPath	  ::=  	'[' PropertyListPathNotEmpty ']'
-Collection	  ::=  	'(' GraphNode+ ')'
-CollectionPath	  ::=  	'(' GraphNodePath+ ')'
+BlankNodePropertyListPath	  ::=  	OP_LSQUARE PropertyListPathNotEmpty OP_RSQUARE
+Collection	  ::=  	OP_LROUND GraphNode+ OP_RROUND
+CollectionPath	  ::=  	OP_LROUND GraphNodePath+ OP_RROUND
 GraphNode	  ::=  	VarOrTerm | TriplesNode
 GraphNodePath	  ::=  	VarOrTerm | TriplesNodePath
 VarOrTerm	  ::=  	Var | GraphTerm
@@ -146,86 +148,86 @@ VarOrIri	  ::=  	Var | iri
 Var	  ::=  	VAR1 | VAR2
 GraphTerm	  ::=  	iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | NIL
 Expression	  ::=  	ConditionalOrExpression
-ConditionalOrExpression	  ::=  	ConditionalAndExpression ( '||' ConditionalAndExpression )*
-ConditionalAndExpression	  ::=  	ValueLogical ( '&&' ValueLogical )*
+ConditionalOrExpression	  ::=  	ConditionalAndExpression ( OP_PIPEPIPE ConditionalAndExpression )*
+ConditionalAndExpression	  ::=  	ValueLogical ( OP_ANDAND ValueLogical )*
 ValueLogical	  ::=  	RelationalExpression
-RelationalExpression	  ::=  	NumericExpression ( '=' NumericExpression | '!=' NumericExpression | '<' NumericExpression | '>' NumericExpression | '<=' NumericExpression | '>=' NumericExpression | KW_IN ExpressionList | KW_NOT KW_IN ExpressionList )?
+RelationalExpression	  ::=  	NumericExpression ( OP_EQ NumericExpression | OP_NE NumericExpression | OP_LT NumericExpression | OP_GT NumericExpression | OP_LE NumericExpression | OP_GE NumericExpression | KW_IN ExpressionList | KW_NOT KW_IN ExpressionList )?
 NumericExpression	  ::=  	AdditiveExpression
-AdditiveExpression	  ::=  	MultiplicativeExpression ( '+' MultiplicativeExpression | '-' MultiplicativeExpression | ( NumericLiteralPositive | NumericLiteralNegative ) ( ( '*' UnaryExpression ) | ( '/' UnaryExpression ) )* )*
-MultiplicativeExpression	  ::=  	UnaryExpression ( '*' UnaryExpression | '/' UnaryExpression )*
-UnaryExpression	  ::=  	  '!' PrimaryExpression
-| '+' PrimaryExpression
-| '-' PrimaryExpression
+AdditiveExpression	  ::=  	MultiplicativeExpression ( OP_PLUS MultiplicativeExpression | OP_MINUS MultiplicativeExpression | ( NumericLiteralPositive | NumericLiteralNegative ) ( ( OP_MULT UnaryExpression ) | ( OP_DIV UnaryExpression ) )* )*
+MultiplicativeExpression	  ::=  	UnaryExpression ( OP_MULT UnaryExpression | OP_DIV UnaryExpression )*
+UnaryExpression	  ::=  	  OP_NOT PrimaryExpression
+| OP_PLUS PrimaryExpression
+| OP_MINUS PrimaryExpression
 | PrimaryExpression
 PrimaryExpression	  ::=  	BrackettedExpression | BuiltInCall | iriOrFunction | RDFLiteral | NumericLiteral | BooleanLiteral | Var
-BrackettedExpression	  ::=  	'(' Expression ')'
+BrackettedExpression	  ::=  	OP_LROUND Expression OP_RROUND
 BuiltInCall	  ::=  	  Aggregate
-| KW_STR '(' Expression ')'
-| KW_LANG '(' Expression ')'
-| KW_LANGMATCHES '(' Expression ',' Expression ')'
-| KW_DATATYPE '(' Expression ')'
-| KW_BOUND '(' Var ')'
-| KW_IRI '(' Expression ')'
-| KW_URI '(' Expression ')'
-| KW_BNODE ( '(' Expression ')' | NIL )
+| KW_STR OP_LROUND Expression OP_RROUND
+| KW_LANG OP_LROUND Expression OP_RROUND
+| KW_LANGMATCHES OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_DATATYPE OP_LROUND Expression OP_RROUND
+| KW_BOUND OP_LROUND Var OP_RROUND
+| KW_IRI OP_LROUND Expression OP_RROUND
+| KW_URI OP_LROUND Expression OP_RROUND
+| KW_BNODE ( OP_LROUND Expression OP_RROUND | NIL )
 | KW_RAND NIL
-| KW_ABS '(' Expression ')'
-| KW_CEIL '(' Expression ')'
-| KW_FLOOR '(' Expression ')'
-| KW_ROUND '(' Expression ')'
+| KW_ABS OP_LROUND Expression OP_RROUND
+| KW_CEIL OP_LROUND Expression OP_RROUND
+| KW_FLOOR OP_LROUND Expression OP_RROUND
+| KW_ROUND OP_LROUND Expression OP_RROUND
 | KW_CONCAT ExpressionList
 | SubstringExpression
-| KW_STRLEN '(' Expression ')'
+| KW_STRLEN OP_LROUND Expression OP_RROUND
 | StrReplaceExpression
-| KW_UCASE '(' Expression ')'
-| KW_LCASE '(' Expression ')'
-| 'ENCODE_FOR_URI' '(' Expression ')'
-| KW_CONTAINS '(' Expression ',' Expression ')'
-| KW_STRSTARTS '(' Expression ',' Expression ')'
-| KW_STRENDS '(' Expression ',' Expression ')'
-| KW_STRBEFORE '(' Expression ',' Expression ')'
-| KW_STRAFTER '(' Expression ',' Expression ')'
-| KW_YEAR '(' Expression ')'
-| KW_MONTH '(' Expression ')'
-| KW_DAY '(' Expression ')'
-| KW_HOURS '(' Expression ')'
-| KW_MINUTES '(' Expression ')'
-| KW_SECONDS '(' Expression ')'
-| KW_TIMEZONE '(' Expression ')'
-| KW_TZ '(' Expression ')'
+| KW_UCASE OP_LROUND Expression OP_RROUND
+| KW_LCASE OP_LROUND Expression OP_RROUND
+| 'ENCODE_FOR_URI' OP_LROUND Expression OP_RROUND
+| KW_CONTAINS OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_STRSTARTS OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_STRENDS OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_STRBEFORE OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_STRAFTER OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_YEAR OP_LROUND Expression OP_RROUND
+| KW_MONTH OP_LROUND Expression OP_RROUND
+| KW_DAY OP_LROUND Expression OP_RROUND
+| KW_HOURS OP_LROUND Expression OP_RROUND
+| KW_MINUTES OP_LROUND Expression OP_RROUND
+| KW_SECONDS OP_LROUND Expression OP_RROUND
+| KW_TIMEZONE OP_LROUND Expression OP_RROUND
+| KW_TZ OP_LROUND Expression OP_RROUND
 | KW_NOW NIL
 | KW_UUID NIL
 | KW_STRUUID NIL
-| 'MD5' '(' Expression ')'
-| 'SHA1' '(' Expression ')'
-| 'SHA256' '(' Expression ')'
-| 'SHA384' '(' Expression ')'
-| 'SHA512' '(' Expression ')'
+| 'MD5' OP_LROUND Expression OP_RROUND
+| 'SHA1' OP_LROUND Expression OP_RROUND
+| 'SHA256' OP_LROUND Expression OP_RROUND
+| 'SHA384' OP_LROUND Expression OP_RROUND
+| 'SHA512' OP_LROUND Expression OP_RROUND
 | KW_COALESCE ExpressionList
-| KW_IF '(' Expression ',' Expression ',' Expression ')'
-| KW_STRLANG '(' Expression ',' Expression ')'
-| KW_STRDT '(' Expression ',' Expression ')'
-| KW_SAME_TERM '(' Expression ',' Expression ')'
-| KW_IS_IRI '(' Expression ')'
-| KW_IS_URI '(' Expression ')'
-| KW_IS_BLANK '(' Expression ')'
-| KW_IS_LITERAL '(' Expression ')'
-| KW_IS_NUMERIC '(' Expression ')'
+| KW_IF OP_LROUND Expression OP_COMMA Expression OP_COMMA Expression OP_RROUND
+| KW_STRLANG OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_STRDT OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_SAME_TERM OP_LROUND Expression OP_COMMA Expression OP_RROUND
+| KW_IS_IRI OP_LROUND Expression OP_RROUND
+| KW_IS_URI OP_LROUND Expression OP_RROUND
+| KW_IS_BLANK OP_LROUND Expression OP_RROUND
+| KW_IS_LITERAL OP_LROUND Expression OP_RROUND
+| KW_IS_NUMERIC OP_LROUND Expression OP_RROUND
 | RegexExpression
 | ExistsFunc
 | NotExistsFunc
-RegexExpression	  ::=  	KW_REGEX '(' Expression ',' Expression ( ',' Expression )? ')'
-SubstringExpression	  ::=  	KW_SUBSTR '(' Expression ',' Expression ( ',' Expression )? ')'
-StrReplaceExpression	  ::=  	KW_REPLACE '(' Expression ',' Expression ',' Expression ( ',' Expression )? ')'
+RegexExpression	  ::=  	KW_REGEX OP_LROUND Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND
+SubstringExpression	  ::=  	KW_SUBSTR OP_LROUND Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND
+StrReplaceExpression	  ::=  	KW_REPLACE OP_LROUND Expression OP_COMMA Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND
 ExistsFunc	  ::=  	KW_EXISTS GroupGraphPattern
 NotExistsFunc	  ::=  	KW_NOT KW_EXISTS GroupGraphPattern
-Aggregate	  ::=  	  KW_COUNT '(' KW_DISTINCT? ( '*' | Expression ) ')'
-| KW_SUM '(' KW_DISTINCT? Expression ')'
-| KW_MIN '(' KW_DISTINCT? Expression ')'
-| KW_MAX '(' KW_DISTINCT? Expression ')'
-| KW_AVG '(' KW_DISTINCT? Expression ')'
-| KW_SAMPLE '(' KW_DISTINCT? Expression ')'
-| 'GROUP_CONCAT' '(' KW_DISTINCT? Expression ( ';' KW_SEPARATOR '=' String )? ')'
+Aggregate	  ::=  	  KW_COUNT OP_LROUND KW_DISTINCT? ( OP_MULT | Expression ) OP_RROUND
+| KW_SUM OP_LROUND KW_DISTINCT? Expression OP_RROUND
+| KW_MIN OP_LROUND KW_DISTINCT? Expression OP_RROUND
+| KW_MAX OP_LROUND KW_DISTINCT? Expression OP_RROUND
+| KW_AVG OP_LROUND KW_DISTINCT? Expression OP_RROUND
+| KW_SAMPLE OP_LROUND KW_DISTINCT? Expression OP_RROUND
+| 'GROUP_CONCAT' OP_LROUND KW_DISTINCT? Expression ( OP_SEMI KW_SEPARATOR OP_EQ String )? OP_RROUND
 iriOrFunction	  ::=  	iri ArgList?
 RDFLiteral	  ::=  	String ( LANGTAG | ( '^^' iri ) )?
 NumericLiteral	  ::=  	NumericLiteralUnsigned | NumericLiteralPositive | NumericLiteralNegative

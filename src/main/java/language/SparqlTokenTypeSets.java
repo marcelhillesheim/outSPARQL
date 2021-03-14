@@ -18,8 +18,6 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
  */
 public interface SparqlTokenTypeSets {
 
-    //TODO comments
-    //TokenSet COMMENTS = TokenSet.EMPTY;
     TokenSet COMMENTS = TokenSet.create(LINE_COMMENT);
     TokenSet WHITESPACE = TokenSet.create(WHITE_SPACE);
     TokenSet VARIABLES = TokenSet.create(VAR1, VAR2);
