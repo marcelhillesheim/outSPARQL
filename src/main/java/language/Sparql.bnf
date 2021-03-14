@@ -57,7 +57,6 @@ LimitClause	  ::=  	KW_LIMIT INTEGER {pin=1}
 OffsetClause	  ::=  	KW_OFFSET INTEGER {pin=1}
 ValuesClause	  ::=  	( KW_VALUES DataBlock )?
 //TODO pin rest of file
-//TODO root
 Update	  ::=  	Prologue ( Update1 ( OP_SEMI Update )? )?
 Update1	  ::=  	Load | Clear | Drop | Add | Move | Copy | Create | InsertData | DeleteData | DeleteWhere | Modify
 Load	  ::=  	KW_LOAD KW_SILENT? iri ( KW_INTO GraphRef )?
@@ -67,9 +66,9 @@ Create	  ::=  	KW_CREATE KW_SILENT? GraphRef
 Add	  ::=  	KW_ADD KW_SILENT? GraphOrDefault KW_TO GraphOrDefault
 Move	  ::=  	KW_MOVE KW_SILENT? GraphOrDefault KW_TO GraphOrDefault
 Copy	  ::=  	KW_COPY KW_SILENT? GraphOrDefault KW_TO GraphOrDefault
-InsertData	  ::=  	'INSERT DATA' QuadData
-DeleteData	  ::=  	'DELETE DATA' QuadData
-DeleteWhere	  ::=  	'DELETE WHERE' QuadPattern
+InsertData	  ::=  	KW_INSERT KW_DATA QuadData
+DeleteData	  ::=  	KW_DELETE KW_DATA QuadData
+DeleteWhere	  ::=  	KW_DELETE KW_WHERE QuadPattern
 Modify	  ::=  	( KW_WITH iri )? ( DeleteClause InsertClause? | InsertClause ) UsingClause* KW_WHERE GroupGraphPattern
 DeleteClause	  ::=  	KW_DELETE QuadPattern
 InsertClause	  ::=  	KW_INSERT QuadPattern
@@ -125,14 +124,14 @@ VerbSimple	  ::=  	Var
 ObjectListPath	  ::=  	ObjectPath ( OP_COMMA ObjectPath )*
 ObjectPath	  ::=  	GraphNodePath
 Path	  ::=  	PathAlternative
-PathAlternative	  ::=  	PathSequence ( '|' PathSequence )*
+PathAlternative	  ::=  	PathSequence ( OP_PIPE PathSequence )*
 PathSequence	  ::=  	PathEltOrInverse ( OP_DIV PathEltOrInverse )*
 PathElt	  ::=  	PathPrimary PathMod?
-PathEltOrInverse	  ::=  	PathElt | '^' PathElt
-PathMod	  ::=  	'?' | OP_MULT | OP_PLUS
+PathEltOrInverse	  ::=  	PathElt | OP_HAT PathElt
+PathMod	  ::=  	OP_QUESTION_MARK | OP_MULT | OP_PLUS
 PathPrimary	  ::=  	iri | KW_A | OP_NOT PathNegatedPropertySet | OP_LROUND Path OP_RROUND
-PathNegatedPropertySet	  ::=  	PathOneInPropertySet | OP_LROUND ( PathOneInPropertySet ( '|' PathOneInPropertySet )* )? OP_RROUND
-PathOneInPropertySet	  ::=  	iri | KW_A | '^' ( iri | KW_A )
+PathNegatedPropertySet	  ::=  	PathOneInPropertySet | OP_LROUND ( PathOneInPropertySet ( OP_PIPE PathOneInPropertySet )* )? OP_RROUND
+PathOneInPropertySet	  ::=  	iri | KW_A | OP_HAT ( iri | KW_A )
 //TODO name conflict --> added Lit_ --> could lead to conflicts if grammar gets updated
 Lit_Integer	  ::=  	INTEGER
 TriplesNode	  ::=  	Collection | BlankNodePropertyList
@@ -181,7 +180,7 @@ BuiltInCall	  ::=  	  Aggregate
 | StrReplaceExpression
 | KW_UCASE OP_LROUND Expression OP_RROUND
 | KW_LCASE OP_LROUND Expression OP_RROUND
-| 'ENCODE_FOR_URI' OP_LROUND Expression OP_RROUND
+| KW_ENCODE_FOR_URI OP_LROUND Expression OP_RROUND
 | KW_CONTAINS OP_LROUND Expression OP_COMMA Expression OP_RROUND
 | KW_STRSTARTS OP_LROUND Expression OP_COMMA Expression OP_RROUND
 | KW_STRENDS OP_LROUND Expression OP_COMMA Expression OP_RROUND
@@ -198,11 +197,11 @@ BuiltInCall	  ::=  	  Aggregate
 | KW_NOW NIL
 | KW_UUID NIL
 | KW_STRUUID NIL
-| 'MD5' OP_LROUND Expression OP_RROUND
-| 'SHA1' OP_LROUND Expression OP_RROUND
-| 'SHA256' OP_LROUND Expression OP_RROUND
-| 'SHA384' OP_LROUND Expression OP_RROUND
-| 'SHA512' OP_LROUND Expression OP_RROUND
+| KW_MD5 OP_LROUND Expression OP_RROUND
+| KW_SHA1 OP_LROUND Expression OP_RROUND
+| KW_SHA256 OP_LROUND Expression OP_RROUND
+| KW_SHA384 OP_LROUND Expression OP_RROUND
+| KW_SHA512 OP_LROUND Expression OP_RROUND
 | KW_COALESCE ExpressionList
 | KW_IF OP_LROUND Expression OP_COMMA Expression OP_COMMA Expression OP_RROUND
 | KW_STRLANG OP_LROUND Expression OP_COMMA Expression OP_RROUND
@@ -227,9 +226,9 @@ Aggregate	  ::=  	  KW_COUNT OP_LROUND KW_DISTINCT? ( OP_MULT | Expression ) OP_
 | KW_MAX OP_LROUND KW_DISTINCT? Expression OP_RROUND
 | KW_AVG OP_LROUND KW_DISTINCT? Expression OP_RROUND
 | KW_SAMPLE OP_LROUND KW_DISTINCT? Expression OP_RROUND
-| 'GROUP_CONCAT' OP_LROUND KW_DISTINCT? Expression ( OP_SEMI KW_SEPARATOR OP_EQ String )? OP_RROUND
+| KW_GROUP_CONCAT OP_LROUND KW_DISTINCT? Expression ( OP_SEMI KW_SEPARATOR OP_EQ String )? OP_RROUND
 iriOrFunction	  ::=  	iri ArgList?
-RDFLiteral	  ::=  	String ( LANGTAG | ( '^^' iri ) )?
+RDFLiteral	  ::=  	String ( LANGTAG | ( OP_HATHAT iri ) )?
 NumericLiteral	  ::=  	NumericLiteralUnsigned | NumericLiteralPositive | NumericLiteralNegative
 NumericLiteralUnsigned	  ::=  	INTEGER | DECIMAL | DOUBLE
 NumericLiteralPositive	  ::=  	INTEGER_POSITIVE | DECIMAL_POSITIVE | DOUBLE_POSITIVE

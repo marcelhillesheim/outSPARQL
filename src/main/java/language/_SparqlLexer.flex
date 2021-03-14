@@ -137,6 +137,7 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
     MOVE { return KW_MOVE; }
     COPY { return KW_COPY; }
     WITH { return KW_WITH; }
+    DATA { return KW_DATA; }
     DELETE { return KW_DELETE; }
     INSERT { return KW_INSERT; }
     USING { return KW_USING; }
@@ -161,6 +162,7 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
     STRLEN { return KW_STRLEN; }
     UCASE { return KW_UCASE; }
     LCASE { return KW_LCASE; }
+    ENCODE_FOR_URI { return KW_ENCODE_FOR_URI; }
     CONTAINS { return KW_CONTAINS; }
     STRSTARTS { return KW_STRSTARTS; }
     STRENDS { return KW_STRENDS; }
@@ -177,6 +179,11 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
     NOW { return KW_NOW; }
     UUID { return KW_UUID; }
     STRUUID { return KW_STRUUID; }
+    MD5 { return KW_MD5; }
+    SHA1 { return KW_SHA1; }
+    SHA256 { return KW_SHA256; }
+    SHA384 { return KW_SHA384; }
+    SHA512 { return KW_SHA512; }
     COALESCE { return KW_COALESCE; }
     IF { return KW_IF; }
     STRLANG { return KW_STRLANG; }
@@ -190,6 +197,7 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
     MAX { return KW_MAX; }
     AVG { return KW_AVG; }
     SAMPLE { return KW_SAMPLE; }
+    GROUP_CONCAT { return KW_GROUP_CONCAT; }
     SEPARATOR { return KW_SEPARATOR; }
 
     true { return LIT_TRUE; }
@@ -228,8 +236,11 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
     "*" { return OP_MULT; }
     "/" { return OP_DIV; }
     "!" { return OP_NOT; }
-// TODO OP_hat
-//    "^^" { return OP_HATHAT; }
+    "^^" { return OP_HATHAT; }
+    // additional OP tokens
+    "^" { return OP_HAT; }
+    "|" { return OP_PIPE; }
+    "?" { return OP_QUESTION_MARK; }
 
     {IRIREF} { return IRIREF;}
     {PNAME_LN} { return SparqlTypes.PNAME_LN; }
