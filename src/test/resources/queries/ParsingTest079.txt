@@ -1,0 +1,15 @@
+Sparql File(0,30)
+  SparqlQueryUnitImpl(QUERY_UNIT)(0,30)
+    SparqlQueryImpl(QUERY)(0,30)
+      SparqlPrologueImpl(PROLOGUE)(0,0)
+        <empty list>
+      SparqlDescribeQueryImpl(DESCRIBE_QUERY)(0,30)
+        PsiElement(SparqlTokenType.KW_DESCRIBE)('DESCRIBE')(0,8)
+        PsiWhiteSpace(' ')(8,9)
+        SparqlVarOrIriImpl(VAR_OR_IRI)(9,30)
+          SparqlIriImpl(IRI)(9,30)
+            PsiElement(SparqlTokenType.IRIREF)('<http://example.org/>')(9,30)
+        SparqlSolutionModifierImpl(SOLUTION_MODIFIER)(30,30)
+          <empty list>
+      SparqlValuesClauseImpl(VALUES_CLAUSE)(30,30)
+        <empty list>

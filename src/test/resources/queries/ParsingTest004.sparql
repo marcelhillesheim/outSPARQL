@@ -1,0 +1,2 @@
+SELECT ?v WHERE { ?v ?p 42 }
+

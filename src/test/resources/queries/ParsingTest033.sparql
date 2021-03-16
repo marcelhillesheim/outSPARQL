@@ -1,0 +1,5 @@
+  SELECT ?x ?name
+  {
+     ?x  foaf:mbox <mailto:alice@example> .
+     ?x  foaf:knows [ foaf:knows [ foaf:name ?name ]].
+  }

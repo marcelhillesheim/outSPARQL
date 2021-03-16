@@ -21,6 +21,7 @@ import static language.psi.SparqlTypes.*;
 %function advance
 %type IElementType
 %unicode
+%ignorecase
 
 IRIREF = "<"([^\<\>\"\{\}\|\^\`\\\x00-\x20])*">"
 PNAME_NS = {PN_PREFIX}? ":"
@@ -87,7 +88,7 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
 %%
 
 <YYINITIAL> {
-//TODO
+// added lower case versions as those got used on the offical w3 website
     BASE { return KW_BASE; }
     PREFIX { return KW_PREFIX; }
     SELECT { return KW_SELECT; }
