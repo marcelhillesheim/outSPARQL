@@ -31,30 +31,30 @@ Query	  ::=  	Prologue
 ValuesClause
 UpdateUnit	  ::=  	Update
 Prologue	  ::=  	( BaseDecl | PrefixDecl )*
-BaseDecl	  ::=  	KW_BASE IRIREF {pin=1}
-PrefixDecl	  ::=  	KW_PREFIX PNAME_NS IRIREF {pin=1}
+BaseDecl	  ::=  	KW_BASE IRIREF
+PrefixDecl	  ::=  	KW_PREFIX PNAME_NS IRIREF
 SelectQuery	  ::=  	SelectClause DatasetClause* WhereClause SolutionModifier
 SubSelect	  ::=  	SelectClause WhereClause SolutionModifier ValuesClause
-SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( OP_LROUND Expression KW_AS Var OP_RROUND ) )+ | OP_MULT ) {pin=1}
-ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE OP_LCURLY TriplesTemplate? OP_RCURLY SolutionModifier ) {pin=1}
-DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | OP_MULT ) DatasetClause* WhereClause? SolutionModifier {pin=1}
-AskQuery	  ::=  	KW_ASK DatasetClause* WhereClause SolutionModifier {pin=1}
-DatasetClause	  ::=  	KW_FROM ( DefaultGraphClause | NamedGraphClause ) {pin=1}
+SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( OP_LROUND Expression KW_AS Var OP_RROUND ) )+ | OP_MULT )
+ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE OP_LCURLY TriplesTemplate? OP_RCURLY SolutionModifier )
+DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | OP_MULT ) DatasetClause* WhereClause? SolutionModifier
+AskQuery	  ::=  	KW_ASK DatasetClause* WhereClause SolutionModifier
+DatasetClause	  ::=  	KW_FROM ( DefaultGraphClause | NamedGraphClause )
 DefaultGraphClause	  ::=  	SourceSelector
 NamedGraphClause	  ::=  	KW_NAMED SourceSelector
 SourceSelector	  ::=  	iri
 WhereClause	  ::=  	KW_WHERE? GroupGraphPattern
 SolutionModifier	  ::=  	GroupClause? HavingClause? OrderClause? LimitOffsetClauses?
-GroupClause	  ::=  	KW_GROUP KW_BY GroupCondition+ {pin=1}
+GroupClause	  ::=  	KW_GROUP KW_BY GroupCondition+
 GroupCondition	  ::=  	BuiltInCall | FunctionCall | OP_LROUND Expression ( KW_AS Var )? OP_RROUND | Var
-HavingClause	  ::=  	KW_HAVING HavingCondition+ {pin=1}
+HavingClause	  ::=  	KW_HAVING HavingCondition+
 HavingCondition	  ::=  	Constraint
-OrderClause	  ::=  	KW_ORDER KW_BY OrderCondition+ {pin=1}
+OrderClause	  ::=  	KW_ORDER KW_BY OrderCondition+
 OrderCondition	  ::=  	( ( KW_ASC | KW_DESC ) BrackettedExpression )
 | ( Constraint | Var )
 LimitOffsetClauses	  ::=  	LimitClause OffsetClause? | OffsetClause LimitClause?
-LimitClause	  ::=  	KW_LIMIT INTEGER {pin=1}
-OffsetClause	  ::=  	KW_OFFSET INTEGER {pin=1}
+LimitClause	  ::=  	KW_LIMIT INTEGER
+OffsetClause	  ::=  	KW_OFFSET INTEGER
 ValuesClause	  ::=  	( KW_VALUES DataBlock )?
 //TODO pin rest of file
 Update	  ::=  	Prologue ( Update1 ( OP_SEMI Update )? )?
