@@ -9,6 +9,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -44,6 +46,7 @@ public class SparqlExecutionAction extends AnAction {
                 break;
             }
         }
+        //TODO what if no sparql file is found
         //TODO Block button till while query is executed
         //TODO SPARQL UPDATE
         //TODO move to Util
@@ -51,14 +54,11 @@ public class SparqlExecutionAction extends AnAction {
         SparqlQuery queryElement = PsiTreeUtil.findChildOfType(currentFile.getNode().getPsi(), SparqlQuery.class);
         if (queryElement.getSelectQuery() != null){
             System.out.println(currentFile.getText());
-            SparqlSelectExecution exec = new SparqlSelectExecution(currentFile.getOriginalFile().getNode().getPsi().getText(),
+            SparqlSelectExecution exec = new SparqlSelectExecution(e.getProject(),"Query Execution" ,currentFile.getOriginalFile().getNode().getPsi().getText(),
                     settings.getUrl(), e);
-            Thread thread = new Thread(exec);
-            thread.start();
-            //queryExecutionToolWindow.setResultContent(exec.generateJBTable());
+            ProgressManager.getInstance().runProcessWithProgressAsynchronously(exec, new BackgroundableProcessIndicator(exec));
         } else {
             //TODO inform user
-          return;
         }
 
 
