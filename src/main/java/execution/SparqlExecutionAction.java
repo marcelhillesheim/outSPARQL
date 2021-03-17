@@ -2,6 +2,7 @@ package execution;
 
 
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -43,25 +44,18 @@ public class SparqlExecutionAction extends AnAction {
                 break;
             }
         }
-
-
-
-
-        // getting toolWindow to display results
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(e.getProject());
-        ToolWindow window = toolWindowManager.getToolWindow(QueryExecutionToolWindow.WINDOW_ID);
-        Content content = window.getContentManager().getSelectedContent();
-        QueryExecutionToolWindow queryExecutionToolWindow = (QueryExecutionToolWindow) content.getComponent();
-
+        //TODO Block button till while query is executed
         //TODO SPARQL UPDATE
         //TODO move to Util
         //checking type of SPARQL query
         SparqlQuery queryElement = PsiTreeUtil.findChildOfType(currentFile.getNode().getPsi(), SparqlQuery.class);
         if (queryElement.getSelectQuery() != null){
             System.out.println(currentFile.getText());
-            SparqlSelectExecution exec = new SparqlSelectExecution(currentFile.getOriginalFile().getNode().getPsi().getText(), settings.getUrl());
-            exec.run();
-            queryExecutionToolWindow.setResultContent(exec.generateJBTable());
+            SparqlSelectExecution exec = new SparqlSelectExecution(currentFile.getOriginalFile().getNode().getPsi().getText(),
+                    settings.getUrl(), e);
+            Thread thread = new Thread(exec);
+            thread.start();
+            //queryExecutionToolWindow.setResultContent(exec.generateJBTable());
         } else {
             //TODO inform user
           return;
