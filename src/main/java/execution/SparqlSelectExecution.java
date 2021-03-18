@@ -53,6 +53,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
         Content content = window.getContentManager().getSelectedContent();
         QueryExecutionToolWindow queryExecutionToolWindow = (QueryExecutionToolWindow) content.getComponent();
         queryExecutionToolWindow.setResultContent(generateJBTable());
+        event.getPresentation().setEnabled(true);
     }
 
     public TableModel generateJBTable(){
