@@ -79,16 +79,10 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
 
 
 
-%x PNAME_NS
-%x PNAME_LN
-%x PNAME_LN2
-
-
 
 %%
 
 <YYINITIAL> {
-// added lower case versions as those got used on the offical w3 website
     BASE { return KW_BASE; }
     PREFIX { return KW_PREFIX; }
     SELECT { return KW_SELECT; }
