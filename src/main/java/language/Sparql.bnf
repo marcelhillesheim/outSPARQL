@@ -19,7 +19,6 @@
 
 }
 
-//TODO test pins (highlighting)
 // pin explanation https://stackoverflow.com/questions/48701510/pin-recoverwhile-in-a-bnf-parsing
 
 // added new root element to the bnf grammar. Otherwise the updateunit is unreachable.
@@ -31,48 +30,48 @@ Query	  ::=  	Prologue
 ValuesClause
 UpdateUnit	  ::=  	Update
 Prologue	  ::=  	( BaseDecl | PrefixDecl )*
-BaseDecl	  ::=  	KW_BASE IRIREF
-PrefixDecl	  ::=  	KW_PREFIX PNAME_NS IRIREF
+BaseDecl	  ::=  	KW_BASE IRIREF {pin=1}
+PrefixDecl	  ::=  	KW_PREFIX PNAME_NS IRIREF {pin=1}
 SelectQuery	  ::=  	SelectClause DatasetClause* WhereClause SolutionModifier
 SubSelect	  ::=  	SelectClause WhereClause SolutionModifier ValuesClause
-SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( OP_LROUND Expression KW_AS Var OP_RROUND ) )+ | OP_MULT )
-ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE OP_LCURLY TriplesTemplate? OP_RCURLY SolutionModifier )
-DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | OP_MULT ) DatasetClause* WhereClause? SolutionModifier
-AskQuery	  ::=  	KW_ASK DatasetClause* WhereClause SolutionModifier
+SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( OP_LROUND Expression KW_AS Var OP_RROUND ) )+ | OP_MULT ) {pin=1}
+ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE OP_LCURLY TriplesTemplate? OP_RCURLY SolutionModifier ) {pin=1}
+DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | OP_MULT ) DatasetClause* WhereClause? SolutionModifier {pin=1}
+AskQuery	  ::=  	KW_ASK DatasetClause* WhereClause SolutionModifier {pin=1}
 DatasetClause	  ::=  	KW_FROM ( DefaultGraphClause | NamedGraphClause )
 DefaultGraphClause	  ::=  	SourceSelector
 NamedGraphClause	  ::=  	KW_NAMED SourceSelector
 SourceSelector	  ::=  	iri
 WhereClause	  ::=  	KW_WHERE? GroupGraphPattern
 SolutionModifier	  ::=  	GroupClause? HavingClause? OrderClause? LimitOffsetClauses?
-GroupClause	  ::=  	KW_GROUP KW_BY GroupCondition+
+GroupClause	  ::=  	KW_GROUP KW_BY GroupCondition+ {pin=1}
 GroupCondition	  ::=  	BuiltInCall | FunctionCall | OP_LROUND Expression ( KW_AS Var )? OP_RROUND | Var
-HavingClause	  ::=  	KW_HAVING HavingCondition+
+HavingClause	  ::=  	KW_HAVING HavingCondition+ {pin=1}
 HavingCondition	  ::=  	Constraint
-OrderClause	  ::=  	KW_ORDER KW_BY OrderCondition+
+OrderClause	  ::=  	KW_ORDER KW_BY OrderCondition+ {pin=1}
 OrderCondition	  ::=  	( ( KW_ASC | KW_DESC ) BrackettedExpression )
 | ( Constraint | Var )
 LimitOffsetClauses	  ::=  	LimitClause OffsetClause? | OffsetClause LimitClause?
-LimitClause	  ::=  	KW_LIMIT INTEGER
-OffsetClause	  ::=  	KW_OFFSET INTEGER
+LimitClause	  ::=  	KW_LIMIT INTEGER {pin=1}
+OffsetClause	  ::=  	KW_OFFSET INTEGER {pin=1}
 ValuesClause	  ::=  	( KW_VALUES DataBlock )?
 //TODO pin rest of file
 Update	  ::=  	Prologue ( Update1 ( OP_SEMI Update )? )?
 Update1	  ::=  	Load | Clear | Drop | Add | Move | Copy | Create | InsertData | DeleteData | DeleteWhere | Modify
-Load	  ::=  	KW_LOAD KW_SILENT? iri ( KW_INTO GraphRef )?
-Clear	  ::=  	KW_CLEAR KW_SILENT? GraphRefAll
-Drop	  ::=  	KW_DROP KW_SILENT? GraphRefAll
-Create	  ::=  	KW_CREATE KW_SILENT? GraphRef
-Add	  ::=  	KW_ADD KW_SILENT? GraphOrDefault KW_TO GraphOrDefault
-Move	  ::=  	KW_MOVE KW_SILENT? GraphOrDefault KW_TO GraphOrDefault
-Copy	  ::=  	KW_COPY KW_SILENT? GraphOrDefault KW_TO GraphOrDefault
+Load	  ::=  	KW_LOAD KW_SILENT? iri ( KW_INTO GraphRef )? {pin=1}
+Clear	  ::=  	KW_CLEAR KW_SILENT? GraphRefAll {pin=1}
+Drop	  ::=  	KW_DROP KW_SILENT? GraphRefAll {pin=1}
+Create	  ::=  	KW_CREATE KW_SILENT? GraphRef {pin=1}
+Add	  ::=  	KW_ADD KW_SILENT? GraphOrDefault KW_TO GraphOrDefault {pin=1}
+Move	  ::=  	KW_MOVE KW_SILENT? GraphOrDefault KW_TO GraphOrDefault {pin=1}
+Copy	  ::=  	KW_COPY KW_SILENT? GraphOrDefault KW_TO GraphOrDefault {pin=1}
 InsertData	  ::=  	KW_INSERT KW_DATA QuadData
 DeleteData	  ::=  	KW_DELETE KW_DATA QuadData
 DeleteWhere	  ::=  	KW_DELETE KW_WHERE QuadPattern
 Modify	  ::=  	( KW_WITH iri )? ( DeleteClause InsertClause? | InsertClause ) UsingClause* KW_WHERE GroupGraphPattern
 DeleteClause	  ::=  	KW_DELETE QuadPattern
 InsertClause	  ::=  	KW_INSERT QuadPattern
-UsingClause	  ::=  	KW_USING ( iri | KW_NAMED iri )
+UsingClause	  ::=  	KW_USING ( iri | KW_NAMED iri ) {pin=1}
 GraphOrDefault	  ::=  	KW_DEFAULT | KW_GRAPH? iri
 GraphRef	  ::=  	KW_GRAPH iri
 GraphRefAll	  ::=  	GraphRef | KW_DEFAULT | KW_NAMED | KW_ALL
@@ -86,18 +85,18 @@ GroupGraphPatternSub	  ::=  	TriplesBlock? ( GraphPatternNotTriples OP_DOT? Trip
 //Todo recover
 TriplesBlock	  ::=  	TriplesSameSubjectPath ( OP_DOT TriplesBlock? )?
 GraphPatternNotTriples	  ::=  	GroupOrUnionGraphPattern | OptionalGraphPattern | MinusGraphPattern | GraphGraphPattern | ServiceGraphPattern | Filter | Bind | InlineData
-OptionalGraphPattern	  ::=  	KW_OPTIONAL GroupGraphPattern
+OptionalGraphPattern	  ::=  	KW_OPTIONAL GroupGraphPattern {pin=1}
 GraphGraphPattern	  ::=  	KW_GRAPH VarOrIri GroupGraphPattern
-ServiceGraphPattern	  ::=  	KW_SERVICE KW_SILENT? VarOrIri GroupGraphPattern
-Bind	  ::=  	KW_BIND OP_LROUND Expression KW_AS Var OP_RROUND
+ServiceGraphPattern	  ::=  	KW_SERVICE KW_SILENT? VarOrIri GroupGraphPattern {pin=1}
+Bind	  ::=  	KW_BIND OP_LROUND Expression KW_AS Var OP_RROUND {pin=1}
 InlineData	  ::=  	KW_VALUES DataBlock
 DataBlock	  ::=  	InlineDataOneVar | InlineDataFull
 InlineDataOneVar	  ::=  	Var OP_LCURLY DataBlockValue* OP_RCURLY
 InlineDataFull	  ::=  	( NIL | OP_LROUND Var* OP_RROUND ) OP_LCURLY ( OP_LROUND DataBlockValue* OP_RROUND | NIL )* OP_RCURLY
 DataBlockValue	  ::=  	iri | RDFLiteral | NumericLiteral | BooleanLiteral | KW_UNDEF
-MinusGraphPattern	  ::=  	KW_MINUS GroupGraphPattern
+MinusGraphPattern	  ::=  	KW_MINUS GroupGraphPattern {pin=1}
 GroupOrUnionGraphPattern	  ::=  	GroupGraphPattern ( KW_UNION GroupGraphPattern )*
-Filter	  ::=  	KW_FILTER Constraint
+Filter	  ::=  	KW_FILTER Constraint {pin=1}
 Constraint	  ::=  	BrackettedExpression | BuiltInCall | FunctionCall
 FunctionCall	  ::=  	iri ArgList
 ArgList	  ::=  	NIL | OP_LROUND KW_DISTINCT? Expression ( OP_COMMA Expression )* OP_RROUND
@@ -215,11 +214,11 @@ BuiltInCall	  ::=  	  Aggregate
 | RegexExpression
 | ExistsFunc
 | NotExistsFunc
-RegexExpression	  ::=  	KW_REGEX OP_LROUND Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND
-SubstringExpression	  ::=  	KW_SUBSTR OP_LROUND Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND
-StrReplaceExpression	  ::=  	KW_REPLACE OP_LROUND Expression OP_COMMA Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND
-ExistsFunc	  ::=  	KW_EXISTS GroupGraphPattern
+RegexExpression	  ::=  	KW_REGEX OP_LROUND Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND {pin=1}
+SubstringExpression	  ::=  	KW_SUBSTR OP_LROUND Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND {pin=1}
+StrReplaceExpression	  ::=  	KW_REPLACE OP_LROUND Expression OP_COMMA Expression OP_COMMA Expression ( OP_COMMA Expression )? OP_RROUND {pin=1}
 NotExistsFunc	  ::=  	KW_NOT KW_EXISTS GroupGraphPattern
+ExistsFunc	  ::=  	KW_EXISTS GroupGraphPattern
 Aggregate	  ::=  	  KW_COUNT OP_LROUND KW_DISTINCT? ( OP_MULT | Expression ) OP_RROUND
 | KW_SUM OP_LROUND KW_DISTINCT? Expression OP_RROUND
 | KW_MIN OP_LROUND KW_DISTINCT? Expression OP_RROUND
