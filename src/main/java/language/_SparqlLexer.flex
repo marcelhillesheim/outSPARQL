@@ -4,6 +4,7 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;import language.psi.SparqlTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
+import static com.intellij.psi.TokenType.ERROR_ELEMENT;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 import static language.psi.SparqlTypes.*;
 
@@ -75,7 +76,7 @@ PERCENT = '%' {HEX} {HEX}
 HEX	= [0-9] | [A-F] | [a-f]
 PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" | "*" | "+" | "," | ";" | "=" | "/" | "?" | "#" | "@" | "%" )
 
-
+INVALID_KEYWORD=[a-zA-Z0-9]+
 
 
 
@@ -256,8 +257,14 @@ PN_LOCAL_ESC = "\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&" | "'" | "(" | ")" 
 
     //  '#', outside an IRI or string, and continue to the end of line (marked by characters 0x0D or 0x0A)
     {LINE_COMMENT} {return LINE_COMMENT; }
+
+    // otherwise keywords are highlighted as bad chars after completing the keyword
+    // https://intellij-support.jetbrains.com/hc/en-us/community/posts/360010554180--Custom-Language-Plugin-Highlighting-not-working-despite-correctly-parsed-psi-file
+    // also performance related
+    // https://jflex.de/manual.html#performance
+    {INVALID_KEYWORD}  { yybegin(YYINITIAL); return BAD_CHARACTER;}
 }
 
 {WS} { return WHITE_SPACE; }
 //[:letter:]+ { return UNKNOWN; }
-[^] { return BAD_CHARACTER; }
+[^] { yybegin(YYINITIAL); return BAD_CHARACTER; }
