@@ -10,6 +10,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.table.JBTable;
 import execution.SparqlExecutionAction;
 import execution.SparqlExecutionEndpointAction;
+import execution.SparqlExecutionLimitSliderAction;
 import org.jetbrains.annotations.NotNull;
 import settings.SparqlAppSettingsManager;
 import settings.SparqlEndpointSettings;
@@ -37,7 +38,9 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
         DefaultActionGroup actionGroup = new DefaultActionGroup(
                 //new Separator(),
                 new SparqlExecutionAction(),
-                new SparqlExecutionEndpointAction()
+                new SparqlExecutionEndpointAction(),
+                new Separator(),
+                new SparqlExecutionLimitSliderAction()
                 );
         ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("", actionGroup, false);
         setToolbar((JComponent) actionToolbar);

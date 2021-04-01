@@ -46,7 +46,7 @@ public class SparqlExecutionAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        SparqlEndpointSettings settings = SparqlAppSettingsManager.getInstance().endpointSettingsForExecution;
+        SparqlEndpointSettings endpointSettings = SparqlAppSettingsManager.getInstance().endpointSettingsForExecution;
 
         //getting file where the cursor is located
         PsiFile currentFile  = e.getData(CommonDataKeys.PSI_FILE);
@@ -67,9 +67,8 @@ public class SparqlExecutionAction extends AnAction {
         //checking type of SPARQL query
         SparqlQuery queryElement = PsiTreeUtil.findChildOfType(currentFile.getNode().getPsi(), SparqlQuery.class);
         if (queryElement.getSelectQuery() != null){
-            System.out.println(currentFile.getText());
             SparqlSelectExecution exec = new SparqlSelectExecution(e.getProject(),"Query Execution" ,currentFile.getOriginalFile().getNode().getPsi().getText(),
-                    settings.getUrl(), e);
+                    endpointSettings.getUrl(), e, SparqlAppSettingsManager.getInstance().limitForExecution);
             this.processIndicator = new BackgroundableProcessIndicator(exec);
             ProgressManager.getInstance().runProcessWithProgressAsynchronously(exec, processIndicator);
         } else {

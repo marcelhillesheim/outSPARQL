@@ -27,6 +27,7 @@ public class SparqlAppSettingsManager implements PersistentStateComponent<Sparql
     public List<SparqlEndpointSettings> endpointSettingsList = new ArrayList<>();
 
     public SparqlEndpointSettings endpointSettingsForExecution = new SparqlEndpointSettings();
+    public String limitForExecution = "unmodified";
 
     public static SparqlAppSettingsManager getInstance() {
         return ServiceManager.getService(SparqlAppSettingsManager.class);

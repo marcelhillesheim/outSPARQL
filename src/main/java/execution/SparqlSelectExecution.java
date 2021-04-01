@@ -23,13 +23,15 @@ import java.util.concurrent.TimeUnit;
 public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
     private final String queryString;
     private final String endpointUrl;
+    private final String limit;
     private final AnActionEvent event;
     private ResultSet results;
 
-    public SparqlSelectExecution(@Nullable Project project, @NlsContexts.ProgressTitle @NotNull String title, String queryString, String endpointUrl, AnActionEvent event) {
+    public SparqlSelectExecution(@Nullable Project project, @NlsContexts.ProgressTitle @NotNull String title, String queryString, String endpointUrl, AnActionEvent event, String limit) {
         super(project, title);
         this.queryString = queryString;
         this.endpointUrl = endpointUrl;
+        this.limit =limit;
         this.event = event;
     }
 
@@ -39,14 +41,20 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
 
         //TODO use config values --> abstract instead of interface
         Query jenaQuery = QueryFactory.create(queryString);
+        if (limit.equals("removed")) {
+            jenaQuery.setLimit(Query.NOLIMIT);
+        } else if (limit.equals("unmodified")) {
+            ;
+        } else {
+            jenaQuery.setLimit(Integer.parseInt(limit));
+        }
+
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, jenaQuery);
         //TODO use config values
         qexec.setTimeout(15, TimeUnit.SECONDS);
         ResultSet results = qexec.execSelect();
         this.results = results;
 
-
-        System.out.println(results.getRowNumber());
         // getting toolWindow to display results
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(event.getProject());
         ToolWindow window = toolWindowManager.getToolWindow(QueryExecutionToolWindow.WINDOW_ID);
