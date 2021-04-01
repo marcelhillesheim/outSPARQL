@@ -27,7 +27,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
     private final AnActionEvent event;
     private ResultSet results;
 
-    public SparqlSelectExecution(@Nullable Project project, @NlsContexts.ProgressTitle @NotNull String title, String queryString, String endpointUrl, AnActionEvent event, String limit) {
+    public SparqlSelectExecution(@Nullable Project project, @NotNull String title, String queryString, String endpointUrl, AnActionEvent event, String limit) {
         super(project, title);
         this.queryString = queryString;
         this.endpointUrl = endpointUrl;

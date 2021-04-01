@@ -6,16 +6,12 @@ import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import language.psi.SparqlTokenType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
-import static com.intellij.psi.TokenType.WHITE_SPACE;
-import static language.psi.SparqlTypes.IRIREF;
 
 
 /**
@@ -31,7 +27,7 @@ import static language.psi.SparqlTypes.IRIREF;
 
 public class SparqlSyntaxHighlighter extends SyntaxHighlighterBase {
 
-    private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<IElementType, TextAttributesKey>();
+    private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 
     static {
         // setup the styles
@@ -60,7 +56,7 @@ public class SparqlSyntaxHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     @Override
-    public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+    public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
         return pack(ATTRIBUTES.get(tokenType));
     }
 

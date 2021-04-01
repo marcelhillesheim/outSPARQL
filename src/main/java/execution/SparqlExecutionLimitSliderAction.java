@@ -5,15 +5,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import settings.SparqlAppSettingsManager;
-import settings.SparqlEndpointSettings;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SparqlExecutionLimitSliderAction extends AnAction implements CustomComponentAction
 {

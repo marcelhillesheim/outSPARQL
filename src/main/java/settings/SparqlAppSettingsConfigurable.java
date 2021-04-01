@@ -18,7 +18,7 @@ public class SparqlAppSettingsConfigurable implements Configurable {
     @Override
     public @Nullable JComponent createComponent() {
         dialog = new SparqlSettingsDialog();
-        return (JComponent) dialog.getRootPanel();
+        return dialog.getRootPanel();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SparqlAppSettingsConfigurable implements Configurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         dialog.apply();
     }
 }
