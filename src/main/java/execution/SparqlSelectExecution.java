@@ -26,6 +26,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
     private final String limit;
     private final AnActionEvent event;
     private ResultSet results;
+    private Query jenaQuery;
 
     public SparqlSelectExecution(@Nullable Project project, @NotNull String title, String queryString, String endpointUrl, AnActionEvent event, String limit) {
         super(project, title);
@@ -39,7 +40,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
     public void run(@NotNull ProgressIndicator indicator) {
 
         //TODO use config values --> abstract instead of interface
-        Query jenaQuery = QueryFactory.create(queryString);
+        this.jenaQuery = QueryFactory.create(queryString);
         if (limit.equals("removed")) {
             jenaQuery.setLimit(Query.NOLIMIT);
         } else if (limit.matches("[0-9]+")) {
@@ -93,7 +94,9 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
             ArrayList<String> row = new ArrayList();
 
             for (Iterator<String> iterator = solution.varNames(); iterator.hasNext(); ) {
-                row.add(solution.get(iterator.next()).toString());
+                String field = solution.get(iterator.next()).toString();
+                field = jenaQuery.getPrefixMapping().shortForm(field);
+                row.add(field);
 
             }
             dataList.add(row);
