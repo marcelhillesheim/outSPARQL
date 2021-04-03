@@ -1,19 +1,25 @@
 package execution;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.content.Content;
+import com.intellij.ui.table.JBTable;
 import org.apache.jena.query.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ui.QueryExecutionToolWindow;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -25,8 +31,10 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
     private final String endpointUrl;
     private final String limit;
     private final AnActionEvent event;
+    private final QueryExecutionToolWindow queryExecutionToolWindow;
     private ResultSet results;
     private Query jenaQuery;
+    private String output;
 
     public SparqlSelectExecution(@Nullable Project project, @NotNull String title, String queryString, String endpointUrl, AnActionEvent event, String limit) {
         super(project, title);
@@ -34,30 +42,48 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
         this.endpointUrl = endpointUrl;
         this.limit =limit;
         this.event = event;
+        this.output = "";
+        // getting toolWindow to display results
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(Objects.requireNonNull(event.getProject()));
+        ToolWindow window = toolWindowManager.getToolWindow(QueryExecutionToolWindow.WINDOW_ID);
+        Content content = Objects.requireNonNull(window).getContentManager().getSelectedContent();
+        this.queryExecutionToolWindow= (QueryExecutionToolWindow) content.getComponent();
     }
 
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
-
-        //TODO use config values --> abstract instead of interface
+        updateTextArea("Sending query to " + endpointUrl + " endpoint:");
         this.jenaQuery = QueryFactory.create(queryString);
+
         if (limit.equals("removed")) {
             jenaQuery.setLimit(Query.NOLIMIT);
         } else if (limit.matches("[0-9]+")) {
             jenaQuery.setLimit(Integer.parseInt(limit));
         }
+        updateTextArea(jenaQuery.toString());
 
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, jenaQuery);
         //TODO use config values
         qexec.setTimeout(15, TimeUnit.SECONDS);
 
-        Thread t = new Thread(() -> results = qexec.execSelect());
+        Thread t = new Thread(() -> {
+            try {
+                results = qexec.execSelect();
+            } catch (Exception e) {
+                updateTextArea(e.getMessage());
+                if (qexec != null) {
+                    qexec.close();
+                }
+
+            }
+        });
 
         t.start();
 
+        // checking if user canceled query
         while (t.isAlive()) {
             if (indicator.isCanceled()){
-                System.out.println("cancled");
+                updateTextArea("Query got canceled.");
                 qexec.abort();
                 qexec.close();
                 return;
@@ -69,19 +95,15 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
             }
 
         }
-
-        // getting toolWindow to display results
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(Objects.requireNonNull(event.getProject()));
-        ToolWindow window = toolWindowManager.getToolWindow(QueryExecutionToolWindow.WINDOW_ID);
-        Content content = Objects.requireNonNull(window).getContentManager().getSelectedContent();
-        QueryExecutionToolWindow queryExecutionToolWindow = (QueryExecutionToolWindow) content.getComponent();
-        queryExecutionToolWindow.setResultContent(generateJBTable());
+        if (results == null) return;
+        JBTable resultTable = new JBTable(generateTable());
+        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> queryExecutionToolWindow.setContent(new JScrollPane(resultTable)), ModalityState.any());
 
         qexec.close();
         event.getPresentation().setEnabled(true);
     }
 
-    public TableModel generateJBTable(){
+    public TableModel generateTable(){
         //Procssing endpoint response
         String[] columnNames = Arrays.copyOf(results.getResultVars().toArray(), results.getResultVars().toArray().length, String[].class);
 
@@ -107,4 +129,13 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
         return new DefaultTableModel(data, columnNames);
     }
 
+    private void updateTextArea(String information){
+        output += "\n" + information;
+        JTextPane textPane = new JTextPane();
+        textPane.setText(output);
+        JBScrollPane scrollPane = new JBScrollPane(textPane);
+        // scrolling down automatically
+        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> queryExecutionToolWindow.setContent(scrollPane), ModalityState.any());
+    }
 }
