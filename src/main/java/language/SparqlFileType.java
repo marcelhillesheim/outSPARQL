@@ -3,6 +3,7 @@ package language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ui.SparqlIcons;
 
 import javax.swing.*;
 

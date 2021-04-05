@@ -52,15 +52,21 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
 
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
-        updateTextArea("Sending query to " + endpointUrl + " endpoint:");
-        this.jenaQuery = QueryFactory.create(queryString);
+        updateTextArea("Sending query to " + endpointUrl + " endpoint:", false);
+        try {
+            this.jenaQuery = QueryFactory.create(queryString);
+        } catch (QueryParseException e) {
+            updateTextArea("The query execution is handled by jena. The query couldn't be parsed by jena.\n" +
+                    e.getMessage(), true);
+            return;
+        }
 
         if (limit.equals("removed")) {
             jenaQuery.setLimit(Query.NOLIMIT);
         } else if (limit.matches("[0-9]+")) {
             jenaQuery.setLimit(Integer.parseInt(limit));
         }
-        updateTextArea(jenaQuery.toString());
+        updateTextArea(jenaQuery.toString(), false);
 
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, jenaQuery);
         //TODO use config values
@@ -70,7 +76,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
             try {
                 results = qexec.execSelect();
             } catch (Exception e) {
-                updateTextArea(e.getMessage());
+                updateTextArea(e.getMessage(), true);
                 if (qexec != null) {
                     qexec.close();
                 }
@@ -83,7 +89,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
         // checking if user canceled query
         while (t.isAlive()) {
             if (indicator.isCanceled()){
-                updateTextArea("Query got canceled.");
+                updateTextArea("Query got canceled.", true);
                 qexec.abort();
                 qexec.close();
                 return;
@@ -129,13 +135,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
         return new DefaultTableModel(data, columnNames);
     }
 
-    private void updateTextArea(String information){
-        output += "\n" + information;
-        JTextPane textPane = new JTextPane();
-        textPane.setText(output);
-        JBScrollPane scrollPane = new JBScrollPane(textPane);
-        // scrolling down automatically
-        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> queryExecutionToolWindow.setContent(scrollPane), ModalityState.any());
+    private void updateTextArea(String information, Boolean isErrorMessage){
+        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> queryExecutionToolWindow.updateTextArea(information, isErrorMessage), ModalityState.any());
     }
 }

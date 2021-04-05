@@ -4,7 +4,6 @@ import settings.SparqlAppSettingsManager;
 import settings.SparqlEndpointSettings;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 
 // used code from mybatis-builder as guide
 
@@ -16,7 +15,6 @@ public class SparqlSettingsDialog {
     private JTextField urlTextField;
     private JButton addButton;
     private JButton removeButton;
-    private JFormattedTextField formattedTextField1;
 
     private SparqlAppSettingsManager settings;
 
@@ -24,22 +22,20 @@ public class SparqlSettingsDialog {
         // access settings
         this.settings = SparqlAppSettingsManager.getInstance();
 
-
         // fill list with stored endpoint settings
         DefaultListModel<SparqlEndpointSettings> listModel = new DefaultListModel<>();
         for (SparqlEndpointSettings endpointSettings : settings.endpointSettingsList) {
             listModel.addElement(endpointSettings);
         }
         endpointList.setModel(listModel);
-
-
+        if (listModel.getSize() > 0) {
+            endpointList.setSelectedIndex(0);
+        }
 
         // add listeners
         addButton.addActionListener(e -> doAdd());
         removeButton.addActionListener(e -> doRemove());
         endpointList.addListSelectionListener(e -> doSelect());
-
-
     }
 
 
@@ -50,7 +46,9 @@ public class SparqlSettingsDialog {
         settings.endpointSettingsList.add(sparqlEndpointSettings);
         DefaultListModel model = (DefaultListModel) endpointList.getModel();
         model.addElement(sparqlEndpointSettings);
+        endpointList.setSelectedIndex(model.indexOf(sparqlEndpointSettings));
     }
+
     private void doRemove() {
         int selectedIndex = endpointList.getSelectedIndex();
         if (selectedIndex < 0){
@@ -58,6 +56,13 @@ public class SparqlSettingsDialog {
         }
         settings.endpointSettingsList.remove(endpointList.getModel().getElementAt(selectedIndex));
         ((DefaultListModel) endpointList.getModel()).remove(selectedIndex);
+
+        if (endpointList.getModel().getSize() > selectedIndex) {
+            endpointList.setSelectedIndex(selectedIndex);
+        } else if (selectedIndex > 0) {
+            endpointList.setSelectedIndex(selectedIndex - 1);
+        }
+
     }
 
     private void doSelect() {
@@ -74,11 +79,19 @@ public class SparqlSettingsDialog {
     }
 
 
-    // methods for configureable
+    // methods for configurable
     public void apply() {
         SparqlEndpointSettings selected = (SparqlEndpointSettings) endpointList.getSelectedValue();
         selected.setName(nameTextField.getText());
         selected.setUrl(urlTextField.getText());
+    }
+
+    public void reset() {
+        SparqlEndpointSettings selected = (SparqlEndpointSettings) endpointList.getSelectedValue();
+        if (selected == null) {
+            return;
+        }
+        fillFields(selected);
     }
 
     public boolean isModified(){
@@ -88,13 +101,10 @@ public class SparqlSettingsDialog {
             return false;
         }
 
-        boolean modified = false;
-        modified |= !nameTextField.getText().equals(selected.getName());
+        boolean modified = !nameTextField.getText().equals(selected.getName());
         modified |= !urlTextField.getText().equals(selected.getUrl());
 
-        // modified |= !(Integer.parseInt(timeout.getText())==mConfig.getTimeout());
         return modified;
-
     }
 
     public JPanel getRootPanel() {

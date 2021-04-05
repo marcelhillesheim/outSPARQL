@@ -30,4 +30,7 @@ public class SparqlAppSettingsConfigurable implements Configurable {
     public void apply() {
         dialog.apply();
     }
+
+    @Override
+    public void reset() { dialog.reset(); }
 }

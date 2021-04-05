@@ -38,6 +38,7 @@ public class SparqlExecutionLimitSliderAction extends AnAction implements Custom
         value.setMinimumSize(value.getPreferredSize());
 
         value.setText(settings.limitForExecution);
+        value.setPreferredSize(value.getMinimumSize());
 
         JSlider slider = new JSlider();
         slider.setMaximum(sliderValueToProperValue.size()-1);
