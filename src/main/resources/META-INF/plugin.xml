@@ -1,16 +1,30 @@
 <idea-plugin>
     <id>org.outsparql.outSPARQL</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <!--suppress PluginXmlCapitalization -->
+    <name>outSPARQL</name>
+    <vendor email="contact@marcelhillesheim.com" url="https://github.com/marcelhillesheim/outSPARQL">Marcel Hillesheim</vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+      <p>This plugin adds language support for SPARQL files.</p>
+      <p>The plugin provides the following features:<p>
+      <ul>
+        <li>[feature] Basic custom language support (parsing, highlighting) </li>
+        <li>[feature] SPARQL execution of SELECT queries within the IDE</li>
+      </ul>
     ]]></description>
+
+    <change-notes><![CDATA[
+      <h3>v0.1.0</h3>
+      <ul>
+        <li>[feature] Basic custom language support (parsing, highlighting) </li>
+        <li>[feature] SPARQL execution of SELECT queries within the IDE</li>
+      </ul>
+    ]]></change-notes>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Sparql File" implementationClass="language.SparqlFileType"
@@ -23,7 +37,7 @@
         <applicationService serviceImplementation="settings.SparqlAppSettingsManager"/>
         <applicationConfigurable parentId="tools" instance="settings.SparqlAppSettingsConfigurable"
                                  id="settings.SparqlAppSettingsConfigurable"
-                                 displayName="SPARQL settings"/>
+                                 displayName="SPARQL Settings"/>
 
     </extensions>
     <actions>
