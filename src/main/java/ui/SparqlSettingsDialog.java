@@ -10,13 +10,13 @@ import javax.swing.*;
 
 public class SparqlSettingsDialog {
     private JPanel rootPanel;
-    private JList endpointList;
+    private JList<SparqlEndpointSettings> endpointList;
     private JTextField nameTextField;
     private JTextField urlTextField;
     private JButton addButton;
     private JButton removeButton;
 
-    private SparqlAppSettingsManager settings;
+    private final SparqlAppSettingsManager settings;
 
     public SparqlSettingsDialog(){
         // access settings
@@ -44,7 +44,7 @@ public class SparqlSettingsDialog {
     private void doAdd(){
         SparqlEndpointSettings sparqlEndpointSettings = new SparqlEndpointSettings("new");
         settings.endpointSettingsList.add(sparqlEndpointSettings);
-        DefaultListModel model = (DefaultListModel) endpointList.getModel();
+        DefaultListModel<SparqlEndpointSettings> model = (DefaultListModel<SparqlEndpointSettings>) endpointList.getModel();
         model.addElement(sparqlEndpointSettings);
         endpointList.setSelectedIndex(model.indexOf(sparqlEndpointSettings));
     }
@@ -55,7 +55,7 @@ public class SparqlSettingsDialog {
             return;
         }
         settings.endpointSettingsList.remove(endpointList.getModel().getElementAt(selectedIndex));
-        ((DefaultListModel) endpointList.getModel()).remove(selectedIndex);
+        ((DefaultListModel<SparqlEndpointSettings>) endpointList.getModel()).remove(selectedIndex);
 
         if (endpointList.getModel().getSize() > selectedIndex) {
             endpointList.setSelectedIndex(selectedIndex);
@@ -66,7 +66,7 @@ public class SparqlSettingsDialog {
     }
 
     private void doSelect() {
-        SparqlEndpointSettings selected = (SparqlEndpointSettings) endpointList.getSelectedValue();
+        SparqlEndpointSettings selected = endpointList.getSelectedValue();
         if (selected == null) {
             return;
         }
@@ -81,13 +81,13 @@ public class SparqlSettingsDialog {
 
     // methods for configurable
     public void apply() {
-        SparqlEndpointSettings selected = (SparqlEndpointSettings) endpointList.getSelectedValue();
+        SparqlEndpointSettings selected = endpointList.getSelectedValue();
         selected.setName(nameTextField.getText());
         selected.setUrl(urlTextField.getText());
     }
 
     public void reset() {
-        SparqlEndpointSettings selected = (SparqlEndpointSettings) endpointList.getSelectedValue();
+        SparqlEndpointSettings selected = endpointList.getSelectedValue();
         if (selected == null) {
             return;
         }
@@ -95,7 +95,7 @@ public class SparqlSettingsDialog {
     }
 
     public boolean isModified(){
-        SparqlEndpointSettings selected = (SparqlEndpointSettings) endpointList.getSelectedValue();
+        SparqlEndpointSettings selected = endpointList.getSelectedValue();
 
         if (selected == null) {
             return false;

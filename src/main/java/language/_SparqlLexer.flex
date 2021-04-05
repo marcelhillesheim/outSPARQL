@@ -70,7 +70,7 @@ VARNAME = ( {PN_CHARS_U} | [0-9] ) ( {PN_CHARS_U} | [0-9\u00B7\u0300-\u036F\u203
 PN_CHARS = {PN_CHARS_U} | [\-0-9\u00B7\u0300-\u036F\u203F-\u2040]
 PN_PREFIX = {PN_CHARS_BASE} (({PN_CHARS}|".")* {PN_CHARS})?
 PN_LOCAL = ({PN_CHARS_U} | ':' | [0-9] | {PLX} ) (({PN_CHARS} | "." | ':' | {PLX})* ({PN_CHARS} | ':' | {PLX}) )?
-//TODO test new grammar
+
 PLX	= {PERCENT} | {PN_LOCAL_ESC}
 PERCENT = '%' {HEX} {HEX}
 HEX	= [0-9] | [A-F] | [a-f]

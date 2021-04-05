@@ -1,15 +1,6 @@
 package language;
 
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.ParsingTestCase;
-import com.intellij.testFramework.TestDataFile;
-import com.intellij.util.SystemProperties;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 public class SparqlParsingTest extends ParsingTestCase {
 
@@ -17,7 +8,6 @@ public class SparqlParsingTest extends ParsingTestCase {
         super("", "sparql", new SparqlParserDefinition());
     }
 
-    //TODO remove?
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -125,42 +115,6 @@ public class SparqlParsingTest extends ParsingTestCase {
     public void testParsingTest099() { doTest(true, true); }
     public void testParsingTest100() { doTest(true, true); }
     public void testParsingTest101() { doTest(true, true); }
-
-//    public void testParsingTestData2() {
-//        doTest(true, true);
-//    }
-
-//    // added support for multiple files
-//    protected void doTest(boolean checkResult, boolean ensureNoErrorElements) {
-//        String prefix = getTestName();
-//
-//        File f = new File(getTestDataPath());
-//        String[] files = f.list();
-//
-//        for (String filename : files) {
-//            System.out.println(filename);
-//            if (filename.startsWith(prefix) && filename.endsWith(myFileExt)) {
-//                System.out.println("enter test mode");
-//                String name = StringUtils.removeEnd(filename, "." + myFileExt);
-//                try {
-//                    parseFile(name, loadFile(name + "." + myFileExt));
-//                    if (checkResult) {
-//                        checkResult(name, myFile);
-//                        if (ensureNoErrorElements) {
-//                            ensureNoErrorElements();
-//                        }
-//                    } else {
-//                        toParseTreeText(myFile, skipSpaces(), includeRanges());
-//                    }
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }
-//    }
-
-
-
 
     /**
      * @return path to test data file directory relative to root of this module.

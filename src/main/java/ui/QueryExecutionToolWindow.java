@@ -9,7 +9,6 @@ import com.intellij.ui.components.JBScrollPane;
 import execution.SparqlExecutionAction;
 import execution.SparqlExecutionEndpointAction;
 import execution.SparqlExecutionLimitSliderAction;
-import settings.SparqlAppSettingsManager;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -25,8 +24,6 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
     public QueryExecutionToolWindow(ToolWindow toolWindow) {
         super(true, true);
 
-        SparqlAppSettingsManager settings = SparqlAppSettingsManager.getInstance();
-
         // Intellij style toolbar with actions attached
         DefaultActionGroup actionGroup = new DefaultActionGroup(
                 new SparqlExecutionAction(AllIcons.Actions.Execute),
@@ -34,7 +31,7 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
                 new Separator(),
                 new SparqlExecutionLimitSliderAction()
                 );
-        ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("", actionGroup, false);
+        ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLWINDOW_CONTENT, actionGroup, false);
         setToolbar((JComponent) actionToolbar);
         setContent(new JScrollPane());
 

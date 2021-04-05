@@ -4,7 +4,6 @@ import com.intellij.psi.tree.TokenSet;
 
 
 import static language.psi.SparqlTypes.*;
-import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 /**
  * Sets of token types for easy use.
@@ -20,7 +19,7 @@ public interface SparqlTokenTypeSets {
 
     TokenSet COMMENTS = TokenSet.create(LINE_COMMENT);
     TokenSet WHITESPACE = TokenSet.create(WHITE_SPACE);
-    TokenSet PARANTHESES = TokenSet.create(OP_LROUND, OP_RROUND);
+    TokenSet PARENTHESES = TokenSet.create(OP_LROUND, OP_RROUND);
     TokenSet BRACES = TokenSet.create(OP_LCURLY, OP_RCURLY);
     TokenSet BRACKETS = TokenSet.create(OP_LSQUARE, OP_RSQUARE);
 

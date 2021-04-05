@@ -82,7 +82,6 @@ QuadsNotTriples	  ::=  	KW_GRAPH VarOrIri OP_LCURLY TriplesTemplate? OP_RCURLY
 TriplesTemplate	  ::=  	TriplesSameSubject ( OP_DOT TriplesTemplate? )?
 GroupGraphPattern	  ::=  	OP_LCURLY ( SubSelect | GroupGraphPatternSub ) OP_RCURLY
 GroupGraphPatternSub	  ::=  	TriplesBlock? ( GraphPatternNotTriples OP_DOT? TriplesBlock? )*
-//Todo recover
 TriplesBlock	  ::=  	TriplesSameSubjectPath ( OP_DOT TriplesBlock? )?
 GraphPatternNotTriples	  ::=  	GroupOrUnionGraphPattern | OptionalGraphPattern | MinusGraphPattern | GraphGraphPattern | ServiceGraphPattern | Filter | Bind | InlineData
 OptionalGraphPattern	  ::=  	KW_OPTIONAL GroupGraphPattern {pin=1}
@@ -103,19 +102,15 @@ ArgList	  ::=  	NIL | OP_LROUND KW_DISTINCT? Expression ( OP_COMMA Expression )*
 ExpressionList	  ::=  	NIL | OP_LROUND Expression ( OP_COMMA Expression )* OP_RROUND
 ConstructTemplate	  ::=  	OP_LCURLY ConstructTriples? OP_RCURLY
 ConstructTriples	  ::=  	TriplesSameSubject ( OP_DOT ConstructTriples? )?
-//TODO recover for quad
 TriplesSameSubject	  ::=  	VarOrTerm PropertyListNotEmpty | TriplesNode PropertyList
 PropertyList	  ::=  	PropertyListNotEmpty?
-//TODO recover after new line ("." ";")
 PropertyListNotEmpty	  ::=  	Verb ObjectList ( OP_SEMI ( Verb ObjectList )? )*
 Verb	  ::=  	VarOrIri | KW_A
 ObjectList	  ::=  	Object ( OP_COMMA Object )*
 Object	  ::=  	GraphNode
-//TODO recover
 TriplesSameSubjectPath	  ::=  	VarOrTerm PropertyListPathNotEmpty | TriplesNodePath PropertyListPath
 PropertyListPath	  ::=  	PropertyListPathNotEmpty?
 
-//TODO recover after new line ("." ";")
 PropertyListPathNotEmpty	  ::=  	( VerbPath | VerbSimple ) ObjectListPath ( OP_SEMI ( ( VerbPath | VerbSimple ) ObjectListPath )? )*
 
 VerbPath	  ::=  	Path
