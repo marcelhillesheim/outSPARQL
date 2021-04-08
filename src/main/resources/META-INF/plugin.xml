@@ -2,10 +2,11 @@
     <id>org.outsparql.outSPARQL</id>
     <!--suppress PluginXmlCapitalization -->
     <name>outSPARQL</name>
+    <version>0.1.0</version>
     <vendor email="contact@marcelhillesheim.com" url="https://github.com/marcelhillesheim/outSPARQL">Marcel Hillesheim</vendor>
 
     <description><![CDATA[
-      <p>This plugin adds language support for SPARQL files.</p>
+      <p>This plugin adds language support for SPARQL 1.1 files.</p>
       <p>The plugin provides the following features:<p>
       <ul>
         <li>[feature] Basic custom language support (parsing, highlighting) </li>
