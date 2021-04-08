@@ -33,6 +33,8 @@ public class SparqlExecutionAction extends AnAction {
     public  void update(@NotNull AnActionEvent e) {
         if (processIndicator != null) {
             e.getPresentation().setEnabled(!processIndicator.isRunning());
+        } else {
+            e.getPresentation().setEnabled(true);
         }
         e.getPresentation().setVisible(true);
     }
@@ -43,7 +45,7 @@ public class SparqlExecutionAction extends AnAction {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject()));
         ToolWindow window = toolWindowManager.getToolWindow(QueryExecutionToolWindow.WINDOW_ID);
         Content content = Objects.requireNonNull(window).getContentManager().getSelectedContent();
-        QueryExecutionToolWindow queryExecutionToolWindow = (QueryExecutionToolWindow) content.getComponent();
+        QueryExecutionToolWindow queryExecutionToolWindow = (QueryExecutionToolWindow) Objects.requireNonNull(content).getComponent();
 
         queryExecutionToolWindow.resetTextArea();
 
@@ -67,6 +69,7 @@ public class SparqlExecutionAction extends AnAction {
         } else {
             queryExecutionToolWindow.updateTextArea("SPARQL query from file " + currentFile.getName() + " will be executed. ");
         }
+
         //TODO SPARQL UPDATE
         //TODO move to Util
         //checking type of SPARQL query
@@ -75,7 +78,7 @@ public class SparqlExecutionAction extends AnAction {
             queryExecutionToolWindow.updateTextArea("Couldn't find PSI element SPARQL Query. ", true);
         }else if (Objects.requireNonNull(queryElement).getSelectQuery() != null){
             SparqlSelectExecution exec = new SparqlSelectExecution(e.getProject(), "Query execution",currentFile.getOriginalFile().getNode().getPsi().getText(),
-                    endpointSettings.getUrl(), e, SparqlAppSettingsManager.getInstance().limitForExecution);
+                    endpointSettings.getUrl(), SparqlAppSettingsManager.getInstance().limitForExecution, queryExecutionToolWindow);
             this.processIndicator = new BackgroundableProcessIndicator(exec);
             ProgressManager.getInstance().runProcessWithProgressAsynchronously(exec, processIndicator);
         } else {
