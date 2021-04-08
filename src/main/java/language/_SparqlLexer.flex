@@ -25,6 +25,8 @@ import static language.psi.SparqlTypes.*;
 %ignorecase
 
 IRIREF = "<"([^\<\>\"\{\}\|\^\`\\\x00-\x20])*">"
+// added to fix highlighting
+INVALID_IRIREF = "<"([^\<\>\"\{\}\|\^\`\\\x00-\x20])*
 PNAME_NS = {PN_PREFIX}? ":"
 PNAME_LN = {PNAME_NS} {PN_LOCAL}
 BLANK_NODE_LABEL = "_:" ( {PN_CHARS_U} | [0-9] ) (({PN_CHARS}|".")* {PN_CHARS})?
@@ -262,6 +264,7 @@ INVALID_KEYWORD=[a-zA-Z0-9]+
     // https://intellij-support.jetbrains.com/hc/en-us/community/posts/360010554180--Custom-Language-Plugin-Highlighting-not-working-despite-correctly-parsed-psi-file
     // also performance related
     // https://jflex.de/manual.html#performance
+    {INVALID_IRIREF} { yybegin(YYINITIAL); return BAD_CHARACTER;}
     {INVALID_KEYWORD}  { yybegin(YYINITIAL); return BAD_CHARACTER;}
 }
 
