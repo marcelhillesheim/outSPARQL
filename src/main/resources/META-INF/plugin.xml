@@ -11,6 +11,7 @@
       <ul>
         <li>[feature] Basic custom language support (parsing, highlighting) </li>
         <li>[feature] SPARQL execution of SELECT queries within the IDE</li>
+        <li>[DISCLAIMER] Plugin is in an early stage. If you encounter any issues, feel free to report them.</li>
       </ul>
     ]]></description>
 
