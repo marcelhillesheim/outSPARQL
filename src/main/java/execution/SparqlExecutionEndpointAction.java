@@ -1,29 +1,25 @@
 package execution;
 
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.ui.ComboBox;
+import org.jetbrains.annotations.NotNull;
 import settings.SparqlAppSettingsManager;
 import settings.SparqlEndpointSettings;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+
 
 public class SparqlExecutionEndpointAction extends AnAction implements CustomComponentAction
 {
-    public void actionPerformed( AnActionEvent e ) {
+    public void actionPerformed(@NotNull AnActionEvent e ) {
 
     }
-
-    public JComponent createCustomComponent(Presentation presentation )
+    public @NotNull JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place)
     {
-        ComboBox<SparqlEndpointSettings> comboBox = new ComboBox<SparqlEndpointSettings>();
+        ComboBox<SparqlEndpointSettings> comboBox = new ComboBox<>();
         SparqlAppSettingsManager settings = SparqlAppSettingsManager.getInstance();
         comboBox.addItem(settings.endpointSettingsForExecution);
         comboBox.setSelectedItem(settings.endpointSettingsForExecution);
@@ -49,12 +45,9 @@ public class SparqlExecutionEndpointAction extends AnAction implements CustomCom
             public void popupMenuCanceled(PopupMenuEvent e) { }
 
         });
-        comboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                SparqlAppSettingsManager settings = SparqlAppSettingsManager.getInstance();
-                settings.endpointSettingsForExecution = (SparqlEndpointSettings) e.getItem();
-            }
+        comboBox.addItemListener(e -> {
+            SparqlAppSettingsManager settings1 = SparqlAppSettingsManager.getInstance();
+            settings1.endpointSettingsForExecution = (SparqlEndpointSettings) e.getItem();
         }
         );
         return comboBox;

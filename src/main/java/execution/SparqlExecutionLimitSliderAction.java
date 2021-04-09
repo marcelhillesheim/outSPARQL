@@ -4,20 +4,19 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
+import org.jetbrains.annotations.NotNull;
 import settings.SparqlAppSettingsManager;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class SparqlExecutionLimitSliderAction extends AnAction implements CustomComponentAction
 {
-    public void actionPerformed( AnActionEvent e ) {
+    public void actionPerformed(@NotNull AnActionEvent e ) {
 
     }
 
-    public JComponent createCustomComponent(Presentation presentation )
+    public @NotNull JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place)
     {
         SparqlAppSettingsManager settings = SparqlAppSettingsManager.getInstance();
 
@@ -46,14 +45,11 @@ public class SparqlExecutionLimitSliderAction extends AnAction implements Custom
         slider.setMajorTickSpacing(1);
         slider.setValue(sliderValueToProperValue.indexOf(settings.limitForExecution));
 
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                value.setText(sliderValueToProperValue.get(source.getValue()));
-                value.setPreferredSize(value.getMinimumSize());
-                settings.limitForExecution = sliderValueToProperValue.get(source.getValue());
-            }
+        slider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            value.setText(sliderValueToProperValue.get(source.getValue()));
+            value.setPreferredSize(value.getMinimumSize());
+            settings.limitForExecution = sliderValueToProperValue.get(source.getValue());
         });
 
         JPanel panel = new JPanel();
