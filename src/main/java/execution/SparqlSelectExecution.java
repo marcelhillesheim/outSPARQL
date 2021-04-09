@@ -55,7 +55,7 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
 
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, jenaQuery);
         //TODO use config values
-        qexec.setTimeout(15, TimeUnit.SECONDS);
+        qexec.setTimeout(25, TimeUnit.SECONDS);
 
         Thread t = new Thread(() -> {
             try {
