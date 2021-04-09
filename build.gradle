@@ -4,7 +4,6 @@ plugins {
 }
 
 group 'org.outsparql'
-version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -24,9 +23,4 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version '2020.3.2'
-}
-patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
 }
