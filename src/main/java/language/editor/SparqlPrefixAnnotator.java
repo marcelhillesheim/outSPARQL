@@ -12,11 +12,15 @@ public class SparqlPrefixAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        // mark prefixedname, if prefix hasn't been declared within the query
+        //TODO quickfix
+        //mark prefixedname, if prefix hasn't been declared within the query
         if (element instanceof SparqlPrefixedName){
             SparqlPrefixedName prefixedName = (SparqlPrefixedName) element;
             if (!SparqlPsiImplUtil.getPrefixMapping(prefixedName).getNsPrefixMap().containsKey(prefixedName.getPrefix())) {
-                holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "The prefix hasn't been declared within the query.").create();
+                holder.newAnnotation(
+                        HighlightSeverity.WEAK_WARNING, "The prefix hasn't been declared within the query.")
+                        .withFix(new SparqlCreatePrefixDeclQuickFix(prefixedName.getPrefix()))
+                        .create();
             }
         }
     }
