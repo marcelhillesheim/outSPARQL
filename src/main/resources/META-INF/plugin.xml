@@ -41,6 +41,7 @@
                                  id="settings.SparqlAppSettingsConfigurable"
                                  displayName="SPARQL Settings"/>
         <annotator language="Sparql" implementationClass="language.editor.SparqlPrefixAnnotator"/>
+        <lang.formatter language="Sparql" implementationClass="language.editor.SparqlFormattingModelBuilder"/>
 
     </extensions>
     <actions>
