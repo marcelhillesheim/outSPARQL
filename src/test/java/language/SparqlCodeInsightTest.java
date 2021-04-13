@@ -2,7 +2,6 @@ package language;
 
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.lang.annotations.Language;
 
@@ -12,20 +11,22 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
 
     public void testPrefixAnnotator() {
         @Language("Sparql")
-        String query_1 = "PREFIX existingprefix: <testurl#>\n" +
+        String prefixdecl = "PREFIX existingPrefix: <testurl#> ";
+        @Language("Sparql")
+        String query =
                 "SELECT ?a WHERE {\n" +
-                "?a existingprefix:test ?b." +
-                "?a missingprefix:test ?c}";
-        myFixture.configureByText(SparqlFileType.INSTANCE, query_1);
+                "?a existingPrefix:test ?b." +
+                "?a missingPrefix:test ?c}";
+        myFixture.configureByText(SparqlFileType.INSTANCE,prefixdecl + query);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
-        for (HighlightInfo info : highlightInfos){
-            System.out.println(info.getDescription());
-            System.out.println(info.getText());
-            System.out.println(info.getSeverity().getName());
-        }
+        assertEquals("missingPrefix:test", highlightInfos.get(0).getText());
+        assertEquals(1, highlightInfos.size());
 
-
-
+        // test without prefix declaration
+        myFixture.configureByText(SparqlFileType.INSTANCE, query);
+        highlightInfos = myFixture.doHighlighting();
+        assertEquals("existingPrefix:test", highlightInfos.get(0).getText());
+        assertEquals(2, highlightInfos.size());
     }
 
 }
