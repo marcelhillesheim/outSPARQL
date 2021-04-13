@@ -27,4 +27,9 @@ public class SparqlPrefixedNameImpl extends ASTWrapperPsiElement implements Spar
     else super.accept(visitor);
   }
 
+  @Override
+  public String getPrefix() {
+    return SparqlPsiImplUtil.getPrefix(this);
+  }
+
 }

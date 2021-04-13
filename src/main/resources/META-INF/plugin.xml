@@ -40,6 +40,7 @@
         <applicationConfigurable parentId="tools" instance="settings.SparqlAppSettingsConfigurable"
                                  id="settings.SparqlAppSettingsConfigurable"
                                  displayName="SPARQL Settings"/>
+        <annotator language="Sparql" implementationClass="language.editor.SparqlPrefixAnnotator"/>
 
     </extensions>
     <actions>

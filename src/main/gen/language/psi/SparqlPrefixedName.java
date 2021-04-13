@@ -7,4 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface SparqlPrefixedName extends PsiElement {
 
+  String getPrefix();
+
 }
