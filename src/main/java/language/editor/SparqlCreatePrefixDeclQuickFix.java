@@ -4,8 +4,11 @@ import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import language.SparqlElementFactory;
@@ -38,9 +41,11 @@ public class SparqlCreatePrefixDeclQuickFix extends BaseIntentionAction  {
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         WriteCommandAction.writeCommandAction(project).run(() -> {
             SparqlPrefixDecl prefixDecl = SparqlElementFactory.createPrefixDecl(project, prefix);
-            //TODO create Prologue in case no Prologue exists. remove require nonnull
+
             Objects.requireNonNull(PsiTreeUtil.findChildOfType(file, SparqlPrologue.class)).getNode().addChild(prefixDecl.getNode());
-            //TODO move caret to "<>" see quickfix tutorial
+            CodeStyleManager.getInstance(project).reformat(Objects.requireNonNull(PsiTreeUtil.findChildOfType(file, SparqlPrologue.class)));
+            ((Navigatable) prefixDecl.getLastChild().getNavigationElement()).navigate(true);
+            Objects.requireNonNull(FileEditorManager.getInstance(project).getSelectedTextEditor()).getCaretModel().moveCaretRelatively(1, 0, false, false, false);
         });
     }
 }
