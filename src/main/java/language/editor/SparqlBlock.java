@@ -5,15 +5,22 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.formatter.common.AbstractBlock;
-import language.psi.SparqlPrefixDecl;
+import language.psi.impl.SparqlBaseDeclImpl;
+import language.psi.impl.SparqlPrefixDeclImpl;
+import language.psi.impl.SparqlPrologueImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SparqlBlock extends AbstractBlock {
+
+    //TODO add all block elements
+    //list contains all psi elements, which should have no other element within the same line
+    //e.g. only one prefix declaration per line
+    private final List<Class<?>> singleLineElements = Arrays.asList(
+            SparqlPrologueImpl.class, SparqlPrefixDeclImpl.class, SparqlBaseDeclImpl.class
+    );
 
     private final SpacingBuilder spacingBuilder;
 
@@ -48,8 +55,9 @@ public class SparqlBlock extends AbstractBlock {
         if (child1 instanceof ASTBlock && child2 instanceof ASTBlock) {
             final PsiElement element1 = Objects.requireNonNull(((ASTBlock) child1).getNode()).getPsi();
             final PsiElement element2 = Objects.requireNonNull(((ASTBlock) child2).getNode()).getPsi();
-            //TODO add all block elements
-            if (element1 instanceof SparqlPrefixDecl || element2 instanceof SparqlPrefixDecl) {
+
+            // add newline before and after element
+            if (singleLineElements.contains(element1.getClass()) || singleLineElements.contains(element2.getClass())) {
                 return Spacing.createSpacing(0,0,1,true,0);
             }
 
