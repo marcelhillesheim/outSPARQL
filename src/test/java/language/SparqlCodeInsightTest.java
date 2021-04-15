@@ -10,15 +10,15 @@ import java.util.List;
 
 public class SparqlCodeInsightTest extends BasePlatformTestCase {
 
-    public void testPrefixAnnotator() {
+    public void testPrefixDeclarationMissingAnnotator() {
         @Language("Sparql")
-        String prefixdecl = "PREFIX existingPrefix: <testurl#> ";
+        String prefixDecl = "PREFIX existingPrefix: <testurl#> ";
         @Language("Sparql")
         String query =
                 "SELECT ?a WHERE {\n" +
                 "?a existingPrefix:test ?b." +
                 "?a missingPrefix:test ?c}";
-        myFixture.configureByText(SparqlFileType.INSTANCE,prefixdecl + query);
+        myFixture.configureByText(SparqlFileType.INSTANCE,prefixDecl + query);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
         assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "missingPrefix:test".equals(highlightInfo.getText())).count());
         assertEquals(1, highlightInfos.size());
@@ -37,6 +37,23 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
         assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "existingPrefix:test".equals(highlightInfo.getText())).count());
         assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "missingPrefix:test".equals(highlightInfo.getText())).count());
         assertEquals(2, highlightInfos.size());
+    }
+
+    public void testIriCanBeShortenedAnnotator() {
+        @Language("Sparql")
+        String prefixDecl = "PREFIX existingPrefix: <testurl#> ";
+        @Language("Sparql")
+        String query =
+                "SELECT ?a WHERE {\n" +
+                        "?a <testurl#local> ?b." +
+                        "?a <randomurl#local> ?c." +
+                        "?a existingPrefix:local ?d.}";
+        myFixture.configureByText(SparqlFileType.INSTANCE,prefixDecl + query);
+        List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
+        assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "<testurl#local>".equals(highlightInfo.getText())).count());
+        assertEquals(1, highlightInfos.size());
+
+
     }
 
 }
