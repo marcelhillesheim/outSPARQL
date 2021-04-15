@@ -2,6 +2,7 @@ package language;
 
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.lang.annotations.Language;
 
@@ -19,13 +20,22 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
                 "?a missingPrefix:test ?c}";
         myFixture.configureByText(SparqlFileType.INSTANCE,prefixdecl + query);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
-        assertEquals("missingPrefix:test", highlightInfos.get(0).getText());
+        assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "missingPrefix:test".equals(highlightInfo.getText())).count());
         assertEquals(1, highlightInfos.size());
+
+        // test quickfix
+        List<IntentionAction> allQuickFixes = myFixture.getAllQuickFixes();
+        allQuickFixes.stream().filter(quickFix -> "Create prefix declaration".equals(quickFix.getFamilyName())).forEach(quickFix -> myFixture.launchAction(quickFix));
+        myFixture.checkResult("PREFIX existingPrefix: <testurl#>\n" +
+                "PREFIX missingPrefix: <>SELECT ?a WHERE {\n" +
+                "?a existingPrefix:test ?b.?a missingPrefix:test ?c}");
+
 
         // test without prefix declaration
         myFixture.configureByText(SparqlFileType.INSTANCE, query);
         highlightInfos = myFixture.doHighlighting();
-        assertEquals("existingPrefix:test", highlightInfos.get(0).getText());
+        assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "existingPrefix:test".equals(highlightInfo.getText())).count());
+        assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "missingPrefix:test".equals(highlightInfo.getText())).count());
         assertEquals(2, highlightInfos.size());
     }
 
