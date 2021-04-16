@@ -28,12 +28,12 @@ public class SparqlPrefixAnnotator implements Annotator {
         // SparqlIri is already excluding Iris in Prologue
         if (element instanceof SparqlIri && element.getNode().getChildren(TokenSet.create(IRIREF)).length == 1) {
             String iri = element.getNode().getChildren(TokenSet.create(IRIREF))[0].getText().replaceAll("[<\\>]","");
-            String prefixed = SparqlPsiImplUtil.getPrefixMapping(element).qnameFor(iri);
+            String prefixedName = SparqlPsiImplUtil.getPrefixMapping(element).qnameFor(iri);
 
-            if (prefixed != null) {
+            if (prefixedName != null) {
                 holder.newAnnotation(
-                        HighlightSeverity.WEAK_WARNING, "The IRI can be shortened by " + prefixed + "."
-                )
+                        HighlightSeverity.WEAK_WARNING, "The IRI can be shortened by " + prefixedName + ".")
+                        .withFix(new SparqlShortenIriQuickFix(prefixedName, element))
                         .create();
             }
 

@@ -28,7 +28,7 @@ public class SparqlCreatePrefixDeclQuickFix extends BaseIntentionAction  {
     }
 
     @Override
-    public @NotNull @IntentionFamilyName String getFamilyName() {
+    final public @NotNull @IntentionFamilyName String getFamilyName() {
         return text;
     }
 

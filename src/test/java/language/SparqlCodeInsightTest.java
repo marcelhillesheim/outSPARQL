@@ -4,6 +4,8 @@ package language;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import language.editor.SparqlCreatePrefixDeclQuickFix;
+import language.editor.SparqlShortenIriQuickFix;
 import org.intellij.lang.annotations.Language;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
 
         // test quickfix
         List<IntentionAction> allQuickFixes = myFixture.getAllQuickFixes();
-        allQuickFixes.stream().filter(quickFix -> "Create prefix declaration".equals(quickFix.getFamilyName())).forEach(quickFix -> myFixture.launchAction(quickFix));
+        allQuickFixes.stream().filter(quickFix -> quickFix instanceof SparqlCreatePrefixDeclQuickFix).forEach(quickFix -> myFixture.launchAction(quickFix));
         myFixture.checkResult("PREFIX existingPrefix: <testurl#>\n" +
                 "PREFIX missingPrefix: <>SELECT ?a WHERE {\n" +
                 "?a existingPrefix:test ?b.?a missingPrefix:test ?c}");
@@ -39,7 +41,7 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
         assertEquals(2, highlightInfos.size());
     }
 
-    public void testIriCanBeShortenedAnnotator() {
+    public void testShortenIriAnnotator() {
         @Language("Sparql")
         String prefixDecl = "PREFIX existingPrefix: <testurl#> ";
         @Language("Sparql")
@@ -53,7 +55,11 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
         assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "<testurl#local>".equals(highlightInfo.getText())).count());
         assertEquals(1, highlightInfos.size());
 
-
+        // test quickfix
+        List<IntentionAction> allQuickFixes = myFixture.getAllQuickFixes();
+        allQuickFixes.stream().filter(quickFix -> quickFix instanceof SparqlShortenIriQuickFix).forEach(quickFix -> myFixture.launchAction(quickFix));
+        myFixture.checkResult("PREFIX existingPrefix: <testurl#> SELECT ?a WHERE {\n" +
+                "?a existingPrefix:local ?b.?a <randomurl#local> ?c.?a existingPrefix:local ?d.}");
     }
 
 }
