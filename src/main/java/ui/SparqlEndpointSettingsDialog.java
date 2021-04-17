@@ -8,7 +8,7 @@ import javax.swing.*;
 // used code from mybatis-builder as guide
 
 
-public class SparqlSettingsDialog {
+public class SparqlEndpointSettingsDialog {
     private JPanel rootPanel;
     private JList<SparqlEndpointSettings> endpointList;
     private JTextField nameTextField;
@@ -18,7 +18,7 @@ public class SparqlSettingsDialog {
 
     private final SparqlAppSettingsManager settings;
 
-    public SparqlSettingsDialog(){
+    public SparqlEndpointSettingsDialog(){
         // access settings
         this.settings = SparqlAppSettingsManager.getInstance();
 

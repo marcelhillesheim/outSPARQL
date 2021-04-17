@@ -44,7 +44,13 @@
         <applicationService serviceImplementation="settings.SparqlAppSettingsManager"/>
         <applicationConfigurable parentId="tools" instance="settings.SparqlAppSettingsConfigurable"
                                  id="settings.SparqlAppSettingsConfigurable"
-                                 displayName="SPARQL Settings"/>
+                                 displayName="SPARQL"/>
+        <applicationConfigurable parentId="settings.SparqlAppSettingsConfigurable" instance="settings.SparqlAppEndpointSettingsConfigurable"
+                                 id="settings.SparqlAppEndpointSettingsConfigurable"
+                                 displayName="SPARQL Endpoint Settings"/>
+        <applicationConfigurable parentId="settings.SparqlAppSettingsConfigurable" instance="settings.SparqlAppPrefixSettingsConfigurable"
+                                 id="settings.SparqlAppPrefixSettingsConfigurable"
+                                 displayName="SPARQL Prefix Settings"/>
         <annotator language="Sparql" implementationClass="language.editor.SparqlPrefixAnnotator"/>
         <lang.formatter language="Sparql" implementationClass="language.editor.SparqlFormattingModelBuilder"/>
 
