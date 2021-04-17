@@ -2,7 +2,7 @@
     <id>org.outsparql.outSPARQL</id>
     <!--suppress PluginXmlCapitalization -->
     <name>outSPARQL</name>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <vendor email="contact@marcelhillesheim.com" url="https://github.com/marcelhillesheim/outSPARQL">Marcel Hillesheim</vendor>
 
     <description><![CDATA[
@@ -16,6 +16,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v0.1.1</h3>
+      <ul>
+        <li>[fix] Up-to-date build for 2021.1 </li>
+        <li>[minor] Added plugin logo </li>
+      </ul>
       <h3>v0.1.0</h3>
       <ul>
         <li>[feature] Basic custom language support (parsing, highlighting) </li>

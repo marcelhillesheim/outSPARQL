@@ -22,5 +22,16 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.3.2'
+    version '2021.1'
+}
+
+
+//https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=DG,PS,DL,MPS,MPSIIP,RDCPPP,WS,AC,IIC,IIE,GO,CL,PCD,PCC,RD,PCE,IIU,RM,PCP
+//https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=IIC,IIU
+runPluginVerifier {
+    ideVersions = "2020.1.4, 2020.2.3, 2020.3.2, 2021.1"
+}
+
+patchPluginXml {
+    sinceBuild '201.8743.12'
 }
