@@ -2,20 +2,20 @@ package settings;
 
 public class SparqlEndpointSettings {
 
-    private String name;
-    private String url;
+    private String name = "";
+    private String url = "";
 
     public SparqlEndpointSettings() {
 
     }
+
+    public SparqlEndpointSettings(String name) { this.name = name; }
 
     // for combobox label
     @Override
     public String toString() {
         return name;
     }
-
-    public SparqlEndpointSettings(String name) { this.name = name; }
 
     public String getName() {
         return name;

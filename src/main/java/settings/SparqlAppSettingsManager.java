@@ -25,6 +25,7 @@ import java.util.List;
 public class SparqlAppSettingsManager implements PersistentStateComponent<SparqlAppSettingsManager> {
 
     public List<SparqlEndpointSettings> endpointSettingsList = new ArrayList<>();
+    public List<SparqlPrefixSettings> prefixSettingsList = new ArrayList<>();
 
     public SparqlEndpointSettings endpointSettingsForExecution = new SparqlEndpointSettings();
     public String limitForExecution = "unmodified";

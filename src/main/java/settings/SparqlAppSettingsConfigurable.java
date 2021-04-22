@@ -1,14 +1,11 @@
 package settings;
 
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nullable;
-import ui.SparqlPrefixSettingsDialog;
 
 import javax.swing.*;
 
 public class SparqlAppSettingsConfigurable implements Configurable {
-    private SparqlPrefixSettingsDialog dialog;
     private static final String TEXT_DISPLAY_NAME = "SPARQL Settings";
 
     @Override
@@ -27,7 +24,7 @@ public class SparqlAppSettingsConfigurable implements Configurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
 
     }
 }
