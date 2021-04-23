@@ -4,6 +4,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.jena.shared.PrefixMapping;
+import settings.SparqlAppSettingsManager;
+import settings.SparqlPrefixSettings;
 
 import java.util.Collection;
 
@@ -14,6 +16,11 @@ public class SparqlPsiImplUtil {
         return element.getText().split(":",2)[0];
     }
 
+    /**
+     *
+     * @param element any PsiElement within a SPARQL query
+     * @return jena PrefixMapping with Prefixes extracted from query itself and common prefixes defined by the user via settings
+     */
     public static PrefixMapping getPrefixMapping(PsiElement element) {
         PrefixMapping prefixMapping = PrefixMapping.Factory.create();
         prefixMapping.setNsPrefixes(PrefixMapping.Standard);
@@ -27,6 +34,16 @@ public class SparqlPsiImplUtil {
                 );
             }
         }
+        // adding common/standard Prefixes defined by the user via settings
+        for (SparqlPrefixSettings prefixSettings : SparqlAppSettingsManager.getInstance().prefixSettingsList) {
+            // add prefix if prefix hasn't been defined yet
+            // also check if it is a common prefix
+            if (prefixMapping.getNsPrefixURI(prefixSettings.getPrefix()) == null && prefixSettings.getStandard()) {
+                prefixMapping.setNsPrefix(prefixSettings.getPrefix(), prefixSettings.getIri());
+            }
+        }
+
+
         return prefixMapping;
     }
 }
