@@ -33,7 +33,7 @@ runPluginVerifier {
 }
 
 patchPluginXml {
-    sinceBuild '201.8743.12'
+    sinceBuild '203.7148.57'
     //TODO remove experimental methods which potentially arent supported in later versions
     // untilBuild null
 }
