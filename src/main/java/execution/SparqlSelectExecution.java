@@ -6,10 +6,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.table.JBTable;
-import language.psi.SparqlPsiImplUtil;
 import org.apache.jena.query.*;
 import org.apache.jena.shared.PrefixMapping;
 import org.jetbrains.annotations.NotNull;
+import settings.SparqlSettingsUtil;
 import ui.QueryExecutionToolWindow;
 
 import javax.swing.*;
@@ -44,7 +44,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         queryStringParameterized.setCommandText(queryString);
         // adding common prefixes
         // as jena doesnt accepts query with undefined prefixes even if the endpoint should know the prefix
-        queryStringParameterized.withDefaultMappings(SparqlPsiImplUtil.addCommonPrefixes(PrefixMapping.Factory.create()));
+        queryStringParameterized.withDefaultMappings(SparqlSettingsUtil.addCommonPrefixes(PrefixMapping.Factory.create()));
         try {
             this.jenaQuery = queryStringParameterized.asQuery();
         } catch (QueryParseException e) {

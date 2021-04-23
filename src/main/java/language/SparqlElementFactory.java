@@ -9,8 +9,8 @@ import language.psi.SparqlPrefixedName;
 
 public class SparqlElementFactory {
 
-    public static SparqlPrefixDecl createPrefixDecl(Project project, String prefix) {
-        final SparqlFile file = createFile(project, "PREFIX " + prefix +": <>");
+    public static SparqlPrefixDecl createPrefixDecl(Project project, String prefixDecl) {
+        final SparqlFile file = createFile(project, "PREFIX " + prefixDecl);
         return PsiTreeUtil.findChildOfType(file, SparqlPrefixDecl.class);
     }
 
