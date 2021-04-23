@@ -35,7 +35,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Sparql File" implementationClass="language.SparqlFileType"
-                  fieldName="INSTANCE" language="Sparql" extensions="sparql"/>
+                  fieldName="INSTANCE" language="Sparql" extensions="rq;sparql"/>
         <lang.parserDefinition language="Sparql"
                                implementationClass="language.SparqlParserDefinition"/>
         <lang.syntaxHighlighterFactory language="Sparql"

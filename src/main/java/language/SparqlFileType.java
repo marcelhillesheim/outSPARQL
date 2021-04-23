@@ -30,7 +30,7 @@ public class SparqlFileType extends LanguageFileType {
     @NotNull
     @Override
     public String getDefaultExtension() {
-        return "sparql";
+        return "rq";
     }
 
     @Nullable
