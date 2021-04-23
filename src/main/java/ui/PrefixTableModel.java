@@ -17,7 +17,7 @@ public class PrefixTableModel extends AbstractTableModel {
         }
     }
 
-    private final String[] columnNames = {"Prefix", "IRI", "Known"};
+    private final String[] columnNames = {"Prefix", "IRI", "Standard"};
     private final List<RowData> tableData;
 
     public PrefixTableModel(List<SparqlPrefixSettings> prefixSettingsList) {
@@ -55,12 +55,15 @@ public class PrefixTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0:
                 tableData.get(rowIndex).prefixSettings.setPrefix((String) value);
+                break;
             case 1:
                 tableData.get(rowIndex).prefixSettings.setIri((String) value);
+                break;
             case 2:
                 if (value instanceof Boolean) {
                     tableData.get(rowIndex).prefixSettings.setStandard((Boolean) value);
                 }
+                break;
         }
     }
 
@@ -74,6 +77,7 @@ public class PrefixTableModel extends AbstractTableModel {
     void removeRows(int[] selectedRows) {
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
+            SparqlAppSettingsManager.getInstance().prefixSettingsList.remove(tableData.get(selectedRows[i]).prefixSettings);
             tableData.remove(selectedRows[i]);
         }
         fireTableDataChanged();
