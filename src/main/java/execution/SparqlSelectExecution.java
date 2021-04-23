@@ -114,6 +114,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
             for (Iterator<String> iterator = solution.varNames(); iterator.hasNext(); ) {
                 String field = solution.get(iterator.next()).toString();
                 field = jenaQuery.getPrefixMapping().shortForm(field);
+                field = SparqlSettingsUtil.getStoredPrefixes().shortForm(field);
                 row.add(field);
 
             }
