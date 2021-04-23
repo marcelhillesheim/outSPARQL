@@ -34,7 +34,18 @@ public class SparqlPsiImplUtil {
                 );
             }
         }
-        // adding common/standard Prefixes defined by the user via settings
+        addCommonPrefixes(prefixMapping);
+
+
+        return prefixMapping;
+    }
+
+    /**
+     * Adds common prefixes defined by the user via settings
+     * @param prefixMapping which should be extended by the common prefixes
+     * @return prefixMapping with common prefixes added
+     */
+    public static PrefixMapping addCommonPrefixes(PrefixMapping prefixMapping) {
         for (SparqlPrefixSettings prefixSettings : SparqlAppSettingsManager.getInstance().prefixSettingsList) {
             // add prefix if prefix hasn't been defined yet
             // also check if it is a common prefix
@@ -42,8 +53,6 @@ public class SparqlPsiImplUtil {
                 prefixMapping.setNsPrefix(prefixSettings.getPrefix(), prefixSettings.getIri());
             }
         }
-
-
-        return prefixMapping;
+        return  prefixMapping;
     }
 }

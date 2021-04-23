@@ -6,7 +6,9 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.table.JBTable;
+import language.psi.SparqlPsiImplUtil;
 import org.apache.jena.query.*;
+import org.apache.jena.shared.PrefixMapping;
 import org.jetbrains.annotations.NotNull;
 import ui.QueryExecutionToolWindow;
 
@@ -18,7 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
+public class SparqlSelectExecution extends Task.Backgroundable {
     private final String queryString;
     private final String endpointUrl;
     private final String limit;
@@ -38,8 +40,13 @@ public class SparqlSelectExecution extends Task.@NotNull Backgroundable {
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
         updateTextArea("Sending query to " + endpointUrl + " endpoint:", false);
+        ParameterizedSparqlString queryStringParameterized = new ParameterizedSparqlString();
+        queryStringParameterized.setCommandText(queryString);
+        // adding common prefixes
+        // as jena doesnt accepts query with undefined prefixes even if the endpoint should know the prefix
+        queryStringParameterized.withDefaultMappings(SparqlPsiImplUtil.addCommonPrefixes(PrefixMapping.Factory.create()));
         try {
-            this.jenaQuery = QueryFactory.create(queryString);
+            this.jenaQuery = queryStringParameterized.asQuery();
         } catch (QueryParseException e) {
             updateTextArea("The query execution is handled by jena. The query couldn't be parsed by jena.\n" +
                     e.getMessage(), true);
