@@ -22,7 +22,6 @@ public class SparqlPsiImplUtil {
      */
     public static PrefixMapping getPrefixMapping(PsiElement element) {
         PrefixMapping prefixMapping = PrefixMapping.Factory.create();
-        prefixMapping.setNsPrefixes(PrefixMapping.Standard);
         PsiElement root = element.getContainingFile().getNode().getPsi();
         Collection<SparqlPrefixDecl> prefixDecls = PsiTreeUtil.findChildrenOfType(root, SparqlPrefixDecl.class);
         for (SparqlPrefixDecl prefixDecl : prefixDecls) {
@@ -34,7 +33,6 @@ public class SparqlPsiImplUtil {
             }
         }
         SparqlSettingsUtil.addCommonPrefixes(prefixMapping);
-
 
         return prefixMapping;
     }
