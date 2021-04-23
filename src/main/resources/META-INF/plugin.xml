@@ -2,20 +2,33 @@
     <id>org.outsparql.outSPARQL</id>
     <!--suppress PluginXmlCapitalization -->
     <name>outSPARQL</name>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
     <vendor email="contact@marcelhillesheim.com" url="https://github.com/marcelhillesheim/outSPARQL">Marcel Hillesheim</vendor>
 
     <description><![CDATA[
-      <p>This plugin adds language support for SPARQL 1.1 files.</p>
+      <p>Adds language support for SPARQL 1.1</p>
       <p>The plugin provides the following features:<p>
       <ul>
+        <li>[DISCLAIMER] Plugin is in an early stage. If you encounter any issues, feel free to report them.</li>
         <li>[feature] Basic custom language support (parsing, highlighting) </li>
         <li>[feature] SPARQL execution of SELECT queries within the IDE</li>
-        <li>[DISCLAIMER] Plugin is in an early stage. If you encounter any issues, feel free to report them.</li>
+        <li>[feature] Annotations and Quickfixes for Prefixes</li>
       </ul>
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v0.2.0</h3>
+      <ul>
+        <li>[feature] Added prefix settings
+            <ul>
+                <li>Prefixes which aren't declared within the query are marked with a weak warning</li>
+                <li>Quickfix for creating PREFIX declaration</li>
+                <li>IRIs which can be shortened with a prefix are marked with a weak warning. </li>
+                <li>Quickfix for shortening IRIs </li>
+            </ul>
+        </li>
+        <li>[feature] Added support for .rq file type </li>
+      </ul>
       <h3>v0.1.1</h3>
       <ul>
         <li>[fix] Up-to-date build for 2021.1 </li>
