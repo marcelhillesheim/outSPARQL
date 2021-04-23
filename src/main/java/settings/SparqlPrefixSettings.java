@@ -8,6 +8,11 @@ public class SparqlPrefixSettings {
     public SparqlPrefixSettings () {
 
     }
+    public SparqlPrefixSettings (String prefix, String iri, Boolean isStandard) {
+        this.prefix = prefix;
+        this.iri = iri;
+        this.isStandard = isStandard;
+    }
 
 
     public String getPrefix() {
