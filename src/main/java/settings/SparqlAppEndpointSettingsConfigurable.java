@@ -9,7 +9,7 @@ import javax.swing.*;
 
 public class SparqlAppEndpointSettingsConfigurable implements Configurable {
     private SparqlEndpointSettingsDialog dialog;
-    private static final String TEXT_DISPLAY_NAME = "SPARQL Endpoint Settings";
+    private static final String TEXT_DISPLAY_NAME = "Endpoint Settings";
 
     @Nls
     @Override
@@ -25,14 +25,12 @@ public class SparqlAppEndpointSettingsConfigurable implements Configurable {
 
     @Override
     public boolean isModified() {
-        return dialog.isModified();
+        //TODO check if tablemodel changed
+        return false;
     }
 
     @Override
     public void apply() {
-        dialog.apply();
-    }
 
-    @Override
-    public void reset() { dialog.reset(); }
+    }
 }
