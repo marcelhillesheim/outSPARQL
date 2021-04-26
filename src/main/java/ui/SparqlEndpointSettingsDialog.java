@@ -2,7 +2,6 @@ package ui;
 
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.ui.FontInfo;
 import settings.SparqlAppSettingsManager;
 
 import javax.swing.*;

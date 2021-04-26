@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
+//TODO use SettingsTableModel
 public class PrefixTableModel extends AbstractTableModel {
     private static class RowData {
         SparqlPrefixSettings prefixSettings;
