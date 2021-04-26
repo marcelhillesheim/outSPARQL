@@ -8,7 +8,7 @@ import ui.SparqlPrefixSettingsDialog;
 import javax.swing.*;
 
 public class SparqlAppPrefixSettingsConfigurable implements Configurable {
-    private static final String TEXT_DISPLAY_NAME = "SPARQL Prefix Settings";
+    private static final String TEXT_DISPLAY_NAME = "Prefix Settings";
     private SparqlPrefixSettingsDialog dialog;
 
     @Nls
@@ -25,6 +25,7 @@ public class SparqlAppPrefixSettingsConfigurable implements Configurable {
 
     @Override
     public boolean isModified() {
+        //TODO check if tablemodel changed
         return false;
     }
 

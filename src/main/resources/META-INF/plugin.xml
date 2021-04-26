@@ -60,10 +60,10 @@
                                  displayName="SPARQL"/>
         <applicationConfigurable parentId="settings.SparqlAppSettingsConfigurable" instance="settings.SparqlAppEndpointSettingsConfigurable"
                                  id="settings.SparqlAppEndpointSettingsConfigurable"
-                                 displayName="SPARQL Endpoint Settings"/>
+                                 displayName="Endpoint Settings"/>
         <applicationConfigurable parentId="settings.SparqlAppSettingsConfigurable" instance="settings.SparqlAppPrefixSettingsConfigurable"
                                  id="settings.SparqlAppPrefixSettingsConfigurable"
-                                 displayName="SPARQL Prefix Settings"/>
+                                 displayName="Prefix Settings"/>
         <annotator language="Sparql" implementationClass="language.editor.SparqlPrefixAnnotator"/>
         <lang.formatter language="Sparql" implementationClass="language.editor.SparqlFormattingModelBuilder"/>
 
