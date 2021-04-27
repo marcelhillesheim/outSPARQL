@@ -2,7 +2,8 @@ package ui;
 
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.ui.FontInfo;
+import com.intellij.util.ui.UI;
+import org.intellij.lang.annotations.Language;
 import settings.SparqlAppSettingsManager;
 
 import javax.swing.*;
@@ -16,30 +17,14 @@ public class SparqlPrefixSettingsDialog {
         // access settings
         this.settings = SparqlAppSettingsManager.getInstance();
 
-        this.rootPanel = new JPanel();
-        rootPanel.setLayout(new BorderLayout());
-        rootPanel.add(generateTable(), BorderLayout.CENTER);
-
-        String informationText = "Here you can set Prefixes, which are being used for annotations and quickfixes. " +
-                "If a prefix is set to standard, you won't get a warning, if the prefix is used but not declared within the query. " +
-                "\n \n Disclaimer: For the query execution tool the standard prefixes are always added automatically. " +
-                "So if the library, you are using for query execution, requires all Prefixes to be defined within the query, " +
-                "the query might fail when running via your program. In this case you should set all prefixes to non standard. " +
-                "So you get warnings, if prefix declarations are missing.";
-        JTextArea informationTextArea = new JTextArea(informationText);
-        informationTextArea.setEditable(false);
-        informationTextArea.setLineWrap(true);
-        informationTextArea.setWrapStyleWord(true);
-        informationTextArea.setOpaque(false);
-        informationTextArea.setFont(FontInfo.get(Font.DIALOG).getFont());
-        rootPanel.add(informationTextArea, BorderLayout.NORTH);
+        this.rootPanel = generateTable();
     }
 
-    private JComponent generateTable() {
+    private JPanel generateTable() {
         JBTable table = new JBTable();
         PrefixTableModel tableModel = new PrefixTableModel(settings.prefixSettingsList);
         table.setModel(tableModel);
-        table.getEmptyText().setText("No prefixes set yet");
+        table.getEmptyText().setText("No prefixes added");
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -48,11 +33,15 @@ public class SparqlPrefixSettingsDialog {
                         .setAddAction(button -> tableModel.addRow())
                         .setRemoveAction(button -> tableModel.removeRows(table.getSelectedRows()))
                         .disableUpDownActions()
-                        .createPanel(),
-                BorderLayout.CENTER
+                        .createPanel()
                 );
+        @Language("HTML")
+        String helpText = "<p>Standard prefixes are common prefixes, which don't need a prefix declaration within the query.</p>\n" +
+                "<p>Find out more about this feature <a href='https://plugins.jetbrains.com/plugin/16503-outsparql/custom-pages/672'>here.</a></p>";
 
-        return panel;
+        return UI.PanelFactory.panel(panel).withComment(
+                helpText
+        ).resizeY(true).createPanel();
     }
 
     public JPanel getRootPanel() {

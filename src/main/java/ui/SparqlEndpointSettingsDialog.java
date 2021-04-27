@@ -24,7 +24,7 @@ public class SparqlEndpointSettingsDialog {
         JBTable table = new JBTable();
         EndpointTableModel tableModel = new EndpointTableModel(settings.endpointSettingsList);
         table.setModel(tableModel);
-        table.getEmptyText().setText("No endpoint set yet");
+        table.getEmptyText().setText("No endpoints added.");
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
