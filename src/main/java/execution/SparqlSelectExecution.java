@@ -39,6 +39,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
 
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
+        indicator.setIndeterminate(true);
         updateTextArea("Sending query to " + endpointUrl + " endpoint:", false);
         ParameterizedSparqlString queryStringParameterized = new ParameterizedSparqlString();
         queryStringParameterized.setCommandText(queryString);
@@ -95,7 +96,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         }
         if (results == null) return;
         JBTable resultTable = new JBTable(generateTable());
-        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> queryExecutionToolWindow.setContent(new JScrollPane(resultTable)), ModalityState.any());
+        ApplicationManager.getApplication().invokeLater(() -> queryExecutionToolWindow.setContent(new JScrollPane(resultTable)), ModalityState.any());
 
         qexec.close();
     }
@@ -127,7 +128,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
     }
 
     private void updateTextArea(String information, Boolean isErrorMessage){
-        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> queryExecutionToolWindow.updateTextArea(information, isErrorMessage), ModalityState.any());
+        ApplicationManager.getApplication().invokeLater(() -> queryExecutionToolWindow.updateTextArea(information, isErrorMessage), ModalityState.any());
     }
 
     public String[][] getData() {
