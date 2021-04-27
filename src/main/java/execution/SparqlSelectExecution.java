@@ -45,7 +45,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         queryStringParameterized.setCommandText(queryString);
         // adding common prefixes
         // as jena doesnt accepts query with undefined prefixes even if the endpoint should know the prefix
-        queryStringParameterized.withDefaultMappings(SparqlSettingsUtil.addCommonPrefixes(PrefixMapping.Factory.create()));
+        queryStringParameterized.withDefaultMappings(SparqlSettingsUtil.addStandardPrefixes(PrefixMapping.Factory.create()));
         try {
             this.jenaQuery = queryStringParameterized.asQuery();
         } catch (QueryParseException e) {
