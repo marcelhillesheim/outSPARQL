@@ -33,7 +33,12 @@ public class SparqlPrefixSettingsDialog {
         panel.setLayout(new BorderLayout());
         panel.add(
                 ToolbarDecorator.createDecorator(table)
-                        .setAddAction(button -> tableModel.addRow())
+                        .setAddAction(button -> {
+                            tableModel.addRow();
+                            // focus on newly added row
+                            table.scrollRectToVisible(table.getCellRect(tableModel.getRowCount()-1, 0, true));
+                            table.editCellAt(tableModel.getRowCount()-1,0);
+                        })
                         .setRemoveAction(button -> tableModel.removeRows(table.getSelectedRows()))
                         .disableUpDownActions()
                         .createPanel()
