@@ -19,9 +19,9 @@ public class SparqlPrefixAnnotator implements Annotator {
         if (element instanceof SparqlPrefixedName){
             SparqlPrefixedName prefixedName = (SparqlPrefixedName) element;
             // if not declared in query
-            if (!SparqlPsiImplUtil.getPrefixMapping(prefixedName).getNsPrefixMap().containsKey(prefixedName.getPrefix())) {
+            if (SparqlPsiImplUtil.getPrefixMapping(prefixedName).getNsPrefixURI(prefixedName.getPrefix()) == null) {
                 // if its a standard prefix, give the option to add the prefix declaration
-                if (SparqlSettingsUtil.getStandardPrefixes().getNsPrefixMap().containsKey(prefixedName.getPrefix())) {
+                if (SparqlSettingsUtil.getStandardPrefixes().getNsPrefixURI(prefixedName.getPrefix()) != null) {
                     holder.newAnnotation(
                             HighlightSeverity.INFORMATION, "The prefix hasn't been declared within the query.")
                             .withFix(new SparqlCreatePrefixDeclQuickFix(prefixedName.getPrefix()))
