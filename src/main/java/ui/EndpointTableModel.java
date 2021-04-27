@@ -1,6 +1,5 @@
 package ui;
 
-import settings.SparqlAppSettingsManager;
 import settings.SparqlEndpointSettings;
 
 import java.util.List;
@@ -26,21 +25,19 @@ public class EndpointTableModel extends SettingsTableModel<SparqlEndpointSetting
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        SparqlEndpointSettings endpointSettings = tableData.get(rowIndex).settingUnit;
         switch (columnIndex) {
             case 0:
-                tableData.get(rowIndex).settingUnit.setName((String) value);
+                endpointSettings.setName((String) value);
                 break;
             case 1:
-                tableData.get(rowIndex).settingUnit.setUrl((String) value);
+                endpointSettings.setUrl((String) value);
                 break;
         }
     }
 
-    void addRow() {
-        SparqlEndpointSettings endpointSettings = new SparqlEndpointSettings();
-        SparqlAppSettingsManager.getInstance().endpointSettingsList.add(endpointSettings);
-        tableData.add(new RowData<>(endpointSettings));
-        fireTableDataChanged();
+    @Override
+    public SparqlEndpointSettings createSettingUnit() {
+        return new SparqlEndpointSettings();
     }
-
 }

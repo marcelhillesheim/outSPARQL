@@ -30,6 +30,8 @@ public abstract class SettingsTableModel<T> extends AbstractTableModel {
                 .collect(Collectors.toList());
     }
 
+    public abstract T createSettingUnit ();
+
     @Override
     public int getColumnCount() {
         return columnNames.length;
@@ -55,7 +57,14 @@ public abstract class SettingsTableModel<T> extends AbstractTableModel {
         return columnNames[columnIndex];
     }
 
-    void removeRows(int[] selectedRows) {
+    public void addRow() {
+        T settingUnit = createSettingUnit();
+        settingsList.add(settingUnit);
+        tableData.add(new RowData<>(settingUnit));
+        fireTableDataChanged();
+    }
+
+    public void removeRows(int[] selectedRows) {
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             settingsList.remove(tableData.get(selectedRows[i]).settingUnit);
