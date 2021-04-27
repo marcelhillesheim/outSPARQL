@@ -26,6 +26,9 @@ public class SparqlPrefixSettingsDialog {
         table.setModel(tableModel);
         table.getEmptyText().setText("No prefixes added");
 
+        // setting max width as this column only shows checkBoxes for Boolean value
+        table.getColumnModel().getColumn(2).setMaxWidth(130);
+
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(
