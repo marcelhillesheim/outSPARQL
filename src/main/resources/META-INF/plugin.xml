@@ -20,6 +20,8 @@
       <h3>v0.2.1</h3>
       minor changes
       <ul>
+        <li>[feature] Quickfix for IRIs, which can be shortened with non-standard prefix</li>
+        <li>[feature] Quickfix to generate prefix declaration of a standard prefix</li>
         <li>[fix] improved UI for endpoint settings and prefix settings</li>
       </ul>
       <h3>v0.2.0</h3>
