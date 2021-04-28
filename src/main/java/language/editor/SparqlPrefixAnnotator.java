@@ -41,7 +41,7 @@ public class SparqlPrefixAnnotator implements Annotator {
         if (element instanceof SparqlIri && element.getNode().getChildren(TokenSet.create(IRIREF)).length == 1) {
             String iri = element.getNode().getChildren(TokenSet.create(IRIREF))[0].getText().replaceAll("[<>]","");
             // trying to short with query prefix declarations and standard prefixes
-            String prefixedName = SparqlPsiImplUtil.getPrefixMapping(element).setNsPrefixes(SparqlSettingsUtil.getStandardPrefixes()).qnameFor(iri);
+            String prefixedName = SparqlPsiImplUtil.getPrefixMapping(element).withDefaultMappings(SparqlSettingsUtil.getStandardPrefixes()).qnameFor(iri);
             if (prefixedName != null) {
                 holder.newAnnotation(
                         HighlightSeverity.WEAK_WARNING, "The IRI can be shortened by " + prefixedName + ".")
