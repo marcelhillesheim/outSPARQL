@@ -2,6 +2,17 @@ package language;
 
 import com.intellij.testFramework.ParsingTestCase;
 
+/**
+ * Tests the Parser generated with the .bnf file
+ * The queries are example queries from the w3c SPARQL 1.1 recommendation
+ * The queries are stored in a text file with '###' as separator between queries
+ *
+ * W3_query_list contains example queries from https://www.w3.org/TR/2013/REC-sparql11-query-20130321/
+ * W3_queryUpdate_list contains example queries from https://www.w3.org/TR/2013/REC-sparql11-update-20130321/
+ *
+ * The SPARQL files are generated from these text files with ParserTestQueryGenerator.py
+ */
+
 public class SparqlParsingTest extends ParsingTestCase {
 
     public SparqlParsingTest() {
@@ -115,6 +126,25 @@ public class SparqlParsingTest extends ParsingTestCase {
     public void testParsingTest099() { doTest(true, true); }
     public void testParsingTest100() { doTest(true, true); }
     public void testParsingTest101() { doTest(true, true); }
+
+    // tests for SPARQL update queries
+    public void testParsingUpdateTest000() { doTest(true, true); }
+    public void testParsingUpdateTest001() { doTest(true, true); }
+    public void testParsingUpdateTest002() { doTest(true, true); }
+    public void testParsingUpdateTest003() { doTest(true, true); }
+    public void testParsingUpdateTest004() { doTest(true, true); }
+    public void testParsingUpdateTest005() { doTest(true, true); }
+    public void testParsingUpdateTest006() { doTest(true, true); }
+    public void testParsingUpdateTest007() { doTest(true, true); }
+    public void testParsingUpdateTest008() { doTest(true, true); }
+    public void testParsingUpdateTest009() { doTest(true, true); }
+    public void testParsingUpdateTest010() { doTest(true, true); }
+    public void testParsingUpdateTest011() { doTest(true, true); }
+    public void testParsingUpdateTest012() { doTest(true, true); }
+    public void testParsingUpdateTest013() { doTest(true, true); }
+    public void testParsingUpdateTest014() { doTest(true, true); }
+    public void testParsingUpdateTest015() { doTest(true, true); }
+    public void testParsingUpdateTest016() { doTest(true, true); }
 
     /**
      * @return path to test data file directory relative to root of this module.
