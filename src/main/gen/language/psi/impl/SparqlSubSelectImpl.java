@@ -34,21 +34,21 @@ public class SparqlSubSelectImpl extends ASTWrapperPsiElement implements SparqlS
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlSolutionModifier getSolutionModifier() {
-    return findNotNullChildByClass(SparqlSolutionModifier.class);
+    return findChildByClass(SparqlSolutionModifier.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlValuesClause getValuesClause() {
-    return findNotNullChildByClass(SparqlValuesClause.class);
+    return findChildByClass(SparqlValuesClause.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlWhereClause getWhereClause() {
-    return findNotNullChildByClass(SparqlWhereClause.class);
+    return findChildByClass(SparqlWhereClause.class);
   }
 
 }

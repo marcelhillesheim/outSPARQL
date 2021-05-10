@@ -1631,12 +1631,13 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean DatasetClause(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DatasetClause")) return false;
     if (!nextTokenIs(b, KW_FROM)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DATASET_CLAUSE, null);
     r = consumeToken(b, KW_FROM);
+    p = r; // pin = 1
     r = r && DatasetClause_1(b, l + 1);
-    exit_section_(b, m, DATASET_CLAUSE, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // DefaultGraphClause | NamedGraphClause
@@ -1664,12 +1665,13 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean DeleteClause(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DeleteClause")) return false;
     if (!nextTokenIs(b, KW_DELETE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DELETE_CLAUSE, null);
     r = consumeToken(b, KW_DELETE);
+    p = r; // pin = 1
     r = r && QuadPattern(b, l + 1);
-    exit_section_(b, m, DELETE_CLAUSE, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1677,12 +1679,13 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean DeleteData(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DeleteData")) return false;
     if (!nextTokenIs(b, KW_DELETE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, KW_DELETE, KW_DATA);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DELETE_DATA, null);
+    r = consumeTokens(b, 2, KW_DELETE, KW_DATA);
+    p = r; // pin = 2
     r = r && QuadData(b, l + 1);
-    exit_section_(b, m, DELETE_DATA, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1690,12 +1693,13 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean DeleteWhere(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DeleteWhere")) return false;
     if (!nextTokenIs(b, KW_DELETE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, KW_DELETE, KW_WHERE);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DELETE_WHERE, null);
+    r = consumeTokens(b, 2, KW_DELETE, KW_WHERE);
+    p = r; // pin = 2
     r = r && QuadPattern(b, l + 1);
-    exit_section_(b, m, DELETE_WHERE, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2087,13 +2091,14 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean GroupGraphPattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "GroupGraphPattern")) return false;
     if (!nextTokenIs(b, OP_LCURLY)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, GROUP_GRAPH_PATTERN, null);
     r = consumeToken(b, OP_LCURLY);
-    r = r && GroupGraphPattern_1(b, l + 1);
-    r = r && consumeToken(b, OP_RCURLY);
-    exit_section_(b, m, GROUP_GRAPH_PATTERN, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, GroupGraphPattern_1(b, l + 1));
+    r = p && consumeToken(b, OP_RCURLY) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // SubSelect | GroupGraphPatternSub
@@ -2374,12 +2379,13 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean InsertClause(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "InsertClause")) return false;
     if (!nextTokenIs(b, KW_INSERT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, INSERT_CLAUSE, null);
     r = consumeToken(b, KW_INSERT);
+    p = r; // pin = 1
     r = r && QuadPattern(b, l + 1);
-    exit_section_(b, m, INSERT_CLAUSE, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2387,12 +2393,13 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean InsertData(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "InsertData")) return false;
     if (!nextTokenIs(b, KW_INSERT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, KW_INSERT, KW_DATA);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, INSERT_DATA, null);
+    r = consumeTokens(b, 2, KW_INSERT, KW_DATA);
+    p = r; // pin = 2
     r = r && QuadData(b, l + 1);
-    exit_section_(b, m, INSERT_DATA, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -3362,70 +3369,63 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( VerbPath | VerbSimple ) ObjectListPath ( OP_SEMI ( ( VerbPath | VerbSimple ) ObjectListPath )? )*
+  // PropertyListPathNotEmptySinglePath ( OP_SEMI PropertyListPathNotEmptySinglePath? )*
   public static boolean PropertyListPathNotEmpty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "PropertyListPathNotEmpty")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, PROPERTY_LIST_PATH_NOT_EMPTY, "<property list path not empty>");
-    r = PropertyListPathNotEmpty_0(b, l + 1);
-    r = r && ObjectListPath(b, l + 1);
-    r = r && PropertyListPathNotEmpty_2(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    r = PropertyListPathNotEmptySinglePath(b, l + 1);
+    p = r; // pin = 1
+    r = r && PropertyListPathNotEmpty_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
-  // VerbPath | VerbSimple
-  private static boolean PropertyListPathNotEmpty_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_0")) return false;
-    boolean r;
-    r = VerbPath(b, l + 1);
-    if (!r) r = VerbSimple(b, l + 1);
-    return r;
-  }
-
-  // ( OP_SEMI ( ( VerbPath | VerbSimple ) ObjectListPath )? )*
-  private static boolean PropertyListPathNotEmpty_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_2")) return false;
+  // ( OP_SEMI PropertyListPathNotEmptySinglePath? )*
+  private static boolean PropertyListPathNotEmpty_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_1")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!PropertyListPathNotEmpty_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "PropertyListPathNotEmpty_2", c)) break;
+      if (!PropertyListPathNotEmpty_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "PropertyListPathNotEmpty_1", c)) break;
     }
     return true;
   }
 
-  // OP_SEMI ( ( VerbPath | VerbSimple ) ObjectListPath )?
-  private static boolean PropertyListPathNotEmpty_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_2_0")) return false;
+  // OP_SEMI PropertyListPathNotEmptySinglePath?
+  private static boolean PropertyListPathNotEmpty_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_SEMI);
-    r = r && PropertyListPathNotEmpty_2_0_1(b, l + 1);
+    r = r && PropertyListPathNotEmpty_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // ( ( VerbPath | VerbSimple ) ObjectListPath )?
-  private static boolean PropertyListPathNotEmpty_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_2_0_1")) return false;
-    PropertyListPathNotEmpty_2_0_1_0(b, l + 1);
+  // PropertyListPathNotEmptySinglePath?
+  private static boolean PropertyListPathNotEmpty_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_1_0_1")) return false;
+    PropertyListPathNotEmptySinglePath(b, l + 1);
     return true;
   }
 
+  /* ********************************************************** */
   // ( VerbPath | VerbSimple ) ObjectListPath
-  private static boolean PropertyListPathNotEmpty_2_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_2_0_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = PropertyListPathNotEmpty_2_0_1_0_0(b, l + 1);
+  static boolean PropertyListPathNotEmptySinglePath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PropertyListPathNotEmptySinglePath")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = PropertyListPathNotEmptySinglePath_0(b, l + 1);
+    p = r; // pin = 1
     r = r && ObjectListPath(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // VerbPath | VerbSimple
-  private static boolean PropertyListPathNotEmpty_2_0_1_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "PropertyListPathNotEmpty_2_0_1_0_0")) return false;
+  private static boolean PropertyListPathNotEmptySinglePath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PropertyListPathNotEmptySinglePath_0")) return false;
     boolean r;
     r = VerbPath(b, l + 1);
     if (!r) r = VerbSimple(b, l + 1);
@@ -3437,13 +3437,14 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean QuadData(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "QuadData")) return false;
     if (!nextTokenIs(b, OP_LCURLY)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, QUAD_DATA, null);
     r = consumeToken(b, OP_LCURLY);
-    r = r && Quads(b, l + 1);
-    r = r && consumeToken(b, OP_RCURLY);
-    exit_section_(b, m, QUAD_DATA, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, Quads(b, l + 1));
+    r = p && consumeToken(b, OP_RCURLY) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -3451,13 +3452,14 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean QuadPattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "QuadPattern")) return false;
     if (!nextTokenIs(b, OP_LCURLY)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, QUAD_PATTERN, null);
     r = consumeToken(b, OP_LCURLY);
-    r = r && Quads(b, l + 1);
-    r = r && consumeToken(b, OP_RCURLY);
-    exit_section_(b, m, QUAD_PATTERN, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, Quads(b, l + 1));
+    r = p && consumeToken(b, OP_RCURLY) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -3874,14 +3876,15 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean SelectQuery(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "SelectQuery")) return false;
     if (!nextTokenIs(b, KW_SELECT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SELECT_QUERY, null);
     r = SelectClause(b, l + 1);
-    r = r && SelectQuery_1(b, l + 1);
-    r = r && WhereClause(b, l + 1);
-    r = r && SolutionModifier(b, l + 1);
-    exit_section_(b, m, SELECT_QUERY, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, SelectQuery_1(b, l + 1));
+    r = p && report_error_(b, WhereClause(b, l + 1)) && r;
+    r = p && SolutionModifier(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // DatasetClause*
@@ -4028,14 +4031,15 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   public static boolean SubSelect(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "SubSelect")) return false;
     if (!nextTokenIs(b, KW_SELECT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SUB_SELECT, null);
     r = SelectClause(b, l + 1);
-    r = r && WhereClause(b, l + 1);
-    r = r && SolutionModifier(b, l + 1);
-    r = r && ValuesClause(b, l + 1);
-    exit_section_(b, m, SUB_SELECT, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, WhereClause(b, l + 1));
+    r = p && report_error_(b, SolutionModifier(b, l + 1)) && r;
+    r = p && ValuesClause(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4172,31 +4176,35 @@ public class SparqlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VarOrTerm PropertyListPathNotEmpty | TriplesNodePath PropertyListPath
+  // TriplesSameSubjectPath1 | TriplesSameSubjectPath2
   public static boolean TriplesSameSubjectPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TriplesSameSubjectPath")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TRIPLES_SAME_SUBJECT_PATH, "<triples same subject path>");
-    r = TriplesSameSubjectPath_0(b, l + 1);
-    if (!r) r = TriplesSameSubjectPath_1(b, l + 1);
+    r = TriplesSameSubjectPath1(b, l + 1);
+    if (!r) r = TriplesSameSubjectPath2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
+  /* ********************************************************** */
   // VarOrTerm PropertyListPathNotEmpty
-  private static boolean TriplesSameSubjectPath_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TriplesSameSubjectPath_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+  static boolean TriplesSameSubjectPath1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TriplesSameSubjectPath1")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
     r = VarOrTerm(b, l + 1);
+    p = r; // pin = 1
     r = r && PropertyListPathNotEmpty(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
+  /* ********************************************************** */
   // TriplesNodePath PropertyListPath
-  private static boolean TriplesSameSubjectPath_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TriplesSameSubjectPath_1")) return false;
+  static boolean TriplesSameSubjectPath2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TriplesSameSubjectPath2")) return false;
+    if (!nextTokenIs(b, "", OP_LROUND, OP_LSQUARE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = TriplesNodePath(b, l + 1);

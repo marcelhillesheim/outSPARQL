@@ -28,9 +28,9 @@ public class SparqlDeleteWhereImpl extends ASTWrapperPsiElement implements Sparq
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlQuadPattern getQuadPattern() {
-    return findNotNullChildByClass(SparqlQuadPattern.class);
+    return findChildByClass(SparqlQuadPattern.class);
   }
 
 }

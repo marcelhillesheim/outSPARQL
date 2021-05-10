@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface SparqlDeleteData extends PsiElement {
 
-  @NotNull
+  @Nullable
   SparqlQuadData getQuadData();
 
 }

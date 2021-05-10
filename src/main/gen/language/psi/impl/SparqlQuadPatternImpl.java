@@ -28,9 +28,9 @@ public class SparqlQuadPatternImpl extends ASTWrapperPsiElement implements Sparq
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlQuads getQuads() {
-    return findNotNullChildByClass(SparqlQuads.class);
+    return findChildByClass(SparqlQuads.class);
   }
 
 }

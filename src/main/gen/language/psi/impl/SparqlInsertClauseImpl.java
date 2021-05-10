@@ -28,9 +28,9 @@ public class SparqlInsertClauseImpl extends ASTWrapperPsiElement implements Spar
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlQuadPattern getQuadPattern() {
-    return findNotNullChildByClass(SparqlQuadPattern.class);
+    return findChildByClass(SparqlQuadPattern.class);
   }
 
 }

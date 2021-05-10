@@ -13,10 +13,10 @@ public interface SparqlSelectQuery extends PsiElement {
   @NotNull
   SparqlSelectClause getSelectClause();
 
-  @NotNull
+  @Nullable
   SparqlSolutionModifier getSolutionModifier();
 
-  @NotNull
+  @Nullable
   SparqlWhereClause getWhereClause();
 
 }

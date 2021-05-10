@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface SparqlDeleteClause extends PsiElement {
 
-  @NotNull
+  @Nullable
   SparqlQuadPattern getQuadPattern();
 
 }

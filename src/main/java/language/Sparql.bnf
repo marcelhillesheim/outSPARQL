@@ -32,13 +32,13 @@ UpdateUnit	  ::=  	Update
 Prologue	  ::=  	( BaseDecl | PrefixDecl )*
 BaseDecl	  ::=  	KW_BASE IRIREF {pin=1}
 PrefixDecl	  ::=  	KW_PREFIX PNAME_NS IRIREF {pin=1}
-SelectQuery	  ::=  	SelectClause DatasetClause* WhereClause SolutionModifier
-SubSelect	  ::=  	SelectClause WhereClause SolutionModifier ValuesClause
+SelectQuery	  ::=  	SelectClause DatasetClause* WhereClause SolutionModifier {pin=1}
+SubSelect	  ::=  	SelectClause WhereClause SolutionModifier ValuesClause {pin=1}
 SelectClause	  ::=  	KW_SELECT ( KW_DISTINCT | KW_REDUCED )? ( ( Var | ( OP_LROUND Expression KW_AS Var OP_RROUND ) )+ | OP_MULT ) {pin=1}
 ConstructQuery	  ::=  	KW_CONSTRUCT ( ConstructTemplate DatasetClause* WhereClause SolutionModifier | DatasetClause* KW_WHERE OP_LCURLY TriplesTemplate? OP_RCURLY SolutionModifier ) {pin=1}
 DescribeQuery	  ::=  	KW_DESCRIBE ( VarOrIri+ | OP_MULT ) DatasetClause* WhereClause? SolutionModifier {pin=1}
 AskQuery	  ::=  	KW_ASK DatasetClause* WhereClause SolutionModifier {pin=1}
-DatasetClause	  ::=  	KW_FROM ( DefaultGraphClause | NamedGraphClause )
+DatasetClause	  ::=  	KW_FROM ( DefaultGraphClause | NamedGraphClause ) {pin=1}
 DefaultGraphClause	  ::=  	SourceSelector
 NamedGraphClause	  ::=  	KW_NAMED SourceSelector
 SourceSelector	  ::=  	iri
@@ -65,22 +65,22 @@ Create	  ::=  	KW_CREATE KW_SILENT? GraphRef {pin=1}
 Add	  ::=  	KW_ADD KW_SILENT? GraphOrDefault KW_TO GraphOrDefault {pin=1}
 Move	  ::=  	KW_MOVE KW_SILENT? GraphOrDefault KW_TO GraphOrDefault {pin=1}
 Copy	  ::=  	KW_COPY KW_SILENT? GraphOrDefault KW_TO GraphOrDefault {pin=1}
-InsertData	  ::=  	KW_INSERT KW_DATA QuadData
-DeleteData	  ::=  	KW_DELETE KW_DATA QuadData
-DeleteWhere	  ::=  	KW_DELETE KW_WHERE QuadPattern
+InsertData	  ::=  	KW_INSERT KW_DATA QuadData {pin=2}
+DeleteData	  ::=  	KW_DELETE KW_DATA QuadData {pin=2}
+DeleteWhere	  ::=  	KW_DELETE KW_WHERE QuadPattern {pin=2}
 Modify	  ::=  	( KW_WITH iri )? ( DeleteClause InsertClause? | InsertClause ) UsingClause* KW_WHERE GroupGraphPattern
-DeleteClause	  ::=  	KW_DELETE QuadPattern
-InsertClause	  ::=  	KW_INSERT QuadPattern
+DeleteClause	  ::=  	KW_DELETE QuadPattern {pin=1}
+InsertClause	  ::=  	KW_INSERT QuadPattern {pin=1}
 UsingClause	  ::=  	KW_USING ( iri | KW_NAMED iri ) {pin=1}
 GraphOrDefault	  ::=  	KW_DEFAULT | KW_GRAPH? iri
 GraphRef	  ::=  	KW_GRAPH iri
 GraphRefAll	  ::=  	GraphRef | KW_DEFAULT | KW_NAMED | KW_ALL
-QuadPattern	  ::=  	OP_LCURLY Quads OP_RCURLY
-QuadData	  ::=  	OP_LCURLY Quads OP_RCURLY
+QuadPattern	  ::=  	OP_LCURLY Quads OP_RCURLY {pin=1}
+QuadData	  ::=  	OP_LCURLY Quads OP_RCURLY {pin=1}
 Quads	  ::=  	TriplesTemplate? ( QuadsNotTriples OP_DOT? TriplesTemplate? )*
 QuadsNotTriples	  ::=  	KW_GRAPH VarOrIri OP_LCURLY TriplesTemplate? OP_RCURLY
 TriplesTemplate	  ::=  	TriplesSameSubject ( OP_DOT TriplesTemplate? )?
-GroupGraphPattern	  ::=  	OP_LCURLY ( SubSelect | GroupGraphPatternSub ) OP_RCURLY
+GroupGraphPattern	  ::=  	OP_LCURLY ( SubSelect | GroupGraphPatternSub ) OP_RCURLY {pin=1}
 GroupGraphPatternSub	  ::=  	TriplesBlock? ( GraphPatternNotTriples OP_DOT? TriplesBlock? )*
 TriplesBlock	  ::=  	TriplesSameSubjectPath ( OP_DOT TriplesBlock? )?
 GraphPatternNotTriples	  ::=  	GroupOrUnionGraphPattern | OptionalGraphPattern | MinusGraphPattern | GraphGraphPattern | ServiceGraphPattern | Filter | Bind | InlineData
@@ -108,10 +108,15 @@ PropertyListNotEmpty	  ::=  	Verb ObjectList ( OP_SEMI ( Verb ObjectList )? )*
 Verb	  ::=  	VarOrIri | KW_A
 ObjectList	  ::=  	Object ( OP_COMMA Object )*
 Object	  ::=  	GraphNode
-TriplesSameSubjectPath	  ::=  	VarOrTerm PropertyListPathNotEmpty | TriplesNodePath PropertyListPath
+// created a private rule in order to set a pin
+TriplesSameSubjectPath	  ::=  	TriplesSameSubjectPath1 | TriplesSameSubjectPath2
+private TriplesSameSubjectPath1     ::=  	VarOrTerm PropertyListPathNotEmpty {pin=1}
+private TriplesSameSubjectPath2     ::=  	TriplesNodePath PropertyListPath
 PropertyListPath	  ::=  	PropertyListPathNotEmpty?
 
-PropertyListPathNotEmpty	  ::=  	( VerbPath | VerbSimple ) ObjectListPath ( OP_SEMI ( ( VerbPath | VerbSimple ) ObjectListPath )? )*
+// created a private rule in order to set pin
+PropertyListPathNotEmpty	  ::=  	PropertyListPathNotEmptySinglePath ( OP_SEMI PropertyListPathNotEmptySinglePath? )* {pin=1}
+private PropertyListPathNotEmptySinglePath		  ::=  	( VerbPath | VerbSimple ) ObjectListPath {pin=1}
 
 VerbPath	  ::=  	Path
 VerbSimple	  ::=  	Var

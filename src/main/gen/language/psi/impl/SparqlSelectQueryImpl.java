@@ -40,15 +40,15 @@ public class SparqlSelectQueryImpl extends ASTWrapperPsiElement implements Sparq
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlSolutionModifier getSolutionModifier() {
-    return findNotNullChildByClass(SparqlSolutionModifier.class);
+    return findChildByClass(SparqlSolutionModifier.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SparqlWhereClause getWhereClause() {
-    return findNotNullChildByClass(SparqlWhereClause.class);
+    return findChildByClass(SparqlWhereClause.class);
   }
 
 }

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface SparqlQuadPattern extends PsiElement {
 
-  @NotNull
+  @Nullable
   SparqlQuads getQuads();
 
 }
