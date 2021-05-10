@@ -1,0 +1,46 @@
+# Uses various SPARQL features within one query
+# the query itself is just for parser test purposes
+
+# prologue
+PREFIX pre: <prefixiri#>
+BASE <baseiri>
+
+#select clause
+SELECT ?x
+
+(
+#builtInCall
+(LANGMATCHES(?s, ?d) &&
+#iriOrFunction
+(<> ()) ||
+(<> (?s)) &&
+#RDFLiteral
+"test"@en &&
+"test"^^<> &&
+"test" &&
+#NumericLiteral
+3 &&
+-2 &&
+#BooleanLiteral
+true &&
+#Var
+?d
+) AS ?c)
+
+#DatasetClause
+FROM NAMED <> FROM <> FROM pre:
+
+#WhereClause
+{
+#TriplesBlock
+?a ?b ?c;
+    ?d ?e.
+?a <> pre:.
+?a a <>.
+?a (<>) <>.
+?a (<> | ^<> | a | ^a) <>.
+
+#GraphPatternNotTriples
+{SELECT ?a {} }
+
+}

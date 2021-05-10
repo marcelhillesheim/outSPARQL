@@ -24,6 +24,10 @@ public class SparqlParsingTest extends ParsingTestCase {
         super.setUp();
     }
 
+    public void testManualParserTestSelect() { doTest(true, true); }
+    public void testManualParserTestConstruct() { doTest(true, true); }
+    public void testManualParserTestUpdate() { doTest(true, true); }
+
     public void testParsingTest000() { doTest(true, true); }
     public void testParsingTest001() { doTest(true, true); }
     public void testParsingTest002() { doTest(true, true); }

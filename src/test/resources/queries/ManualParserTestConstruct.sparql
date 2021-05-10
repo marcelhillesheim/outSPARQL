@@ -1,0 +1,8 @@
+# Uses various SPARQL features within one query
+# the query itself is just for parser test purposes
+
+# prologue
+PREFIX pre: <prefixiri#>
+BASE <baseiri>
+
+CONSTRUCT {?a ?b ?c} {?a ?b ?c}

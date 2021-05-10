@@ -1,0 +1,29 @@
+# Uses various SPARQL features within one query
+# the query itself is just for parser test purposes
+
+# prologue
+PREFIX pre: <prefixiri#>
+BASE <baseiri>
+
+LOAD <>;
+
+#GraphRef
+CLEAR GRAPH <>;
+
+#QuadData
+INSERT DATA { };
+#QuadsNotTriples
+INSERT DATA { GRAPH <> { ?a ?b ?c} };
+#TriplesTemplate
+INSERT DATA {?a ?b ?c};
+
+#QuadPattern
+#same as quadDat
+DELETE WHERE { };
+#QuadsNotTriples
+DELETE WHERE { GRAPH <> { ?a ?b ?c} };
+#TriplesTemplate
+DELETE WHERE {?a ?b ?c};
+
+#Modify
+DELETE {?a ?b ?c} WHERE {?a ?b ?c}
