@@ -73,7 +73,8 @@
                                  displayName="Prefix Settings"/>
         <annotator language="Sparql" implementationClass="language.editor.SparqlPrefixAnnotator"/>
         <lang.formatter language="Sparql" implementationClass="language.editor.SparqlFormattingModelBuilder"/>
-
+        <completion.contributor language="Sparql"
+                                implementationClass="language.editor.completion.SparqlCompletionContributor"/>
     </extensions>
     <actions>
     </actions>
