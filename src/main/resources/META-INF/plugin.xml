@@ -75,6 +75,7 @@
         <lang.formatter language="Sparql" implementationClass="language.editor.SparqlFormattingModelBuilder"/>
         <completion.contributor language="Sparql"
                                 implementationClass="language.editor.completion.SparqlCompletionContributor"/>
+        <lang.commenter language="Sparql" implementationClass="language.editor.SparqlCommenter"/>
     </extensions>
     <actions>
     </actions>

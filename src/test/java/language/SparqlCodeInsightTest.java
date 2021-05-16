@@ -2,6 +2,7 @@ package language;
 
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import language.editor.SparqlCreatePrefixDeclQuickFix;
@@ -60,6 +61,15 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
         allQuickFixes.stream().filter(quickFix -> quickFix instanceof SparqlShortenIriQuickFix).forEach(quickFix -> myFixture.launchAction(quickFix));
         myFixture.checkResult("PREFIX existingPrefix: <testurl#> SELECT ?a WHERE {\n" +
                 "?a existingPrefix:local ?b.?a <randomurl#local> ?c.?a existingPrefix:local ?d.}");
+    }
+
+    public void testCommenter() {
+        myFixture.configureByText(SparqlFileType.INSTANCE, "<caret>PREFIX test: <test#url>");
+        CommentByLineCommentAction commentAction = new CommentByLineCommentAction();
+        commentAction.actionPerformedImpl(getProject(), myFixture.getEditor());
+        myFixture.checkResult("#PREFIX test: <test#url>");
+        commentAction.actionPerformedImpl(getProject(), myFixture.getEditor());
+        myFixture.checkResult("PREFIX test: <test#url>");
     }
 
 }
