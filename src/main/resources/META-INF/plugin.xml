@@ -76,6 +76,7 @@
         <completion.contributor language="Sparql"
                                 implementationClass="language.editor.completion.SparqlCompletionContributor"/>
         <lang.commenter language="Sparql" implementationClass="language.editor.SparqlCommenter"/>
+        <lang.braceMatcher language="Sparql" implementationClass="language.editor.SparqlBraceMatcher"/>
     </extensions>
     <actions>
     </actions>

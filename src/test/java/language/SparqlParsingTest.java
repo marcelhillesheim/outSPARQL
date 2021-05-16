@@ -1,6 +1,8 @@
 package language;
 
+import com.intellij.lang.LanguageBraceMatching;
 import com.intellij.testFramework.ParsingTestCase;
+import language.editor.SparqlBraceMatcher;
 
 /**
  * Tests the Parser generated with the .bnf file
@@ -22,6 +24,7 @@ public class SparqlParsingTest extends ParsingTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, new SparqlBraceMatcher());
     }
 
     public void testManualParserTestSelect() { doTest(true, true); }
