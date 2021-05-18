@@ -6,27 +6,20 @@ import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import java.util.List;
 
 public class SparqlCompletionTest extends LightJavaCodeInsightFixtureTestCase {
-    public void testCompletion() {
-        String queryPrologue = "PREFIX pre: <prefixiri#>\n" +
-                "<caret>\n" +
-                "PREFIX pre: <prefixiri#>";
-
-        myFixture.configureByText(SparqlFileType.INSTANCE, queryPrologue);
-        myFixture.complete(CompletionType.BASIC);
-        List<String> lookupElementStrings = myFixture.getLookupElementStrings();
-        System.out.println(lookupElementStrings);
+    //TODO add asserts
+    public void testCompletionTriple() {
 
         String querySelect1 = "SELECT ?a {" +
                 "?a <caret>}";
         myFixture.configureByText(SparqlFileType.INSTANCE, querySelect1);
-        myFixture.complete(CompletionType.BASIC);
-        lookupElementStrings = myFixture.getLookupElementStrings();
+        myFixture.complete(CompletionType.SMART);
+        List<String> lookupElementStrings = myFixture.getLookupElementStrings();
         System.out.println(lookupElementStrings);
 
         String querySelect2 = "SELECT ?a {" +
                 "?a ?b ?c. <caret> ?b ?d.}";
         myFixture.configureByText(SparqlFileType.INSTANCE, querySelect2);
-        myFixture.complete(CompletionType.BASIC);
+        myFixture.complete(CompletionType.SMART);
         lookupElementStrings = myFixture.getLookupElementStrings();
         System.out.println(lookupElementStrings);
 
