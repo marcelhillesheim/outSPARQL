@@ -2,6 +2,11 @@ package language.editor.completion;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -9,43 +14,125 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import language.SparqlElementFactory;
+import language.psi.impl.SparqlPrologueImpl;
+import language.psi.impl.SparqlTriplesBlockImpl;
+import language.psi.impl.SparqlWhereClauseImpl;
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import settings.SparqlSettingsUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+//TODO add link to live auto-completion white paper
 
 public class LiveAutoCompletion {
     private final String pofVariableName = "?OutSparqlPof";
-    private final String fillerVariableName = "?OutSparqlFiller";
     private final String originalQueryString;
     private final int offset;
     private final Project project;
+    private final CompletionResultSet completionResults;
 
-    private String repairedQuery;
+    private PsiFile repairedQuery;
 
-    public LiveAutoCompletion(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet resultSet) {
+    public LiveAutoCompletion(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet completionResults) {
+        this.completionResults = completionResults;
         this.originalQueryString = parameters.getOriginalFile().getText();
         this.offset = parameters.getOffset();
         this.project = parameters.getEditor().getProject();
 
-        generate();
+        generateSuggestions();
     }
+
 
     // for testing purposes
     public LiveAutoCompletion(String query, int offset, Project project){
         this.originalQueryString = query;
         this.offset = offset;
         this.project = project;
+        completionResults = null;
     }
 
-    private void generate() {
+    private void generateSuggestions() {
         repairQuery();
 
         if (repairedQuery != null) {
-            //TODO modify query even further
-            //TODO add comment to generated query
-            //TODO what if there is another, error which cant be resolved at caret position
-        } else {
-            //TODO inform user
+            // only keep prologue and where class as we want to define our own query and solution modifiers
+            String whereClause = Objects.requireNonNull(PsiTreeUtil.findChildOfType(repairedQuery, SparqlWhereClauseImpl.class)).getText();
+            PsiElement prologueElement = PsiTreeUtil.findChildOfType(repairedQuery, SparqlPrologueImpl.class);
+            String prologue;
+            if (prologueElement != null) {
+                prologue = prologueElement.getText();
+            } else {
+                prologue = "";
+            }
+            //TODO FROM
+            String countVariableName = "?OutSparqlCount";
+            String finalQuery = "#" + "generated query, but manually triggered by the user for auto-completion" + "\n"
+                    + "#" + "outSPARQL " + Objects.requireNonNull(PluginManagerCore.getPlugin(PluginId.getId("org.outsparql.outSPARQL"))).getVersion() + "\n"
+                    + prologue
+                    + " SELECT " + pofVariableName + " (count(" + pofVariableName + ") as " + countVariableName + ") WHERE {"
+
+                    //subselect otherwise limit has no effect on performance
+                    + "SELECT " + pofVariableName + " "
+                    + whereClause
+                    + " LIMIT 1000"
+
+                    + "} GROUP BY " + pofVariableName
+                    + " ORDER BY DESC(" + countVariableName + ")";
+
+            Query jenaQuery = QueryFactory.create(finalQuery);
+
+            SparqlSelectExecution execution = new SparqlSelectExecution(project, jenaQuery);
+            execution.send();
+
+            displaySuggestions(execution.getResults(), completionResults,
+                    jenaQuery.getPrefixMapping().withDefaultMappings(SparqlSettingsUtil.getStoredPrefixes()));
         }
+            //TODO else: what if there is another error, which cant be resolved at caret position
+            //TODO inform user
+    }
+
+    private void displaySuggestions(ResultSet results, CompletionResultSet completionResults, PrefixMapping prefixMapping) {
+        List<LookupElement> temporaryList = new ArrayList<>();
+
+        assert results != null;
+        Var resultVar = Var.alloc(results.getResultVars().get(0));
+        Var countVar = Var.alloc(results.getResultVars().get(1));
+        while (results.hasNext()) {
+            Binding entry = results.nextBinding();
+            Node value = entry.get(resultVar);
+            long count = Long.parseLong(entry.get(countVar).getLiteralValue().toString());
+            String label = "";
+            if(value.isURI()){
+                // if there is an abbreviated version of the IRI (prefix)
+                if (prefixMapping.qnameFor(value.getURI())!=null){
+                    label = prefixMapping.qnameFor(value.getURI());
+                } else {
+                    label = "<" + value.getURI() + ">";
+                }
+            } else if(value.isLiteral()){
+                label = value.getLiteral().toString();
+            } else if(value.isBlank()){
+                label = value.getBlankNodeLabel();
+            }
+            double priority = (double) count;
+            temporaryList.add(
+                    PrioritizedLookupElement.withPriority(
+                    LookupElementBuilder.create(label).withTypeText(Double.toString(priority)),
+                    priority
+                    )
+            );
+        }
+        completionResults.addAllElements(temporaryList);
     }
 
 
@@ -60,7 +147,9 @@ public class LiveAutoCompletion {
             if (errorElement != null) {
                 //check where the error is located. If its not after the inserted string, insert a filler variable.
                 PsiElement elementBeforeError = prevElement(errorElement);
-                assert elementBeforeError != null;
+                if (elementBeforeError == null) return;
+
+                String fillerVariableName = "?OutSparqlFiller";
                 if (
                         (!elementBeforeError.getText().contains(pofVariableName) &&
                         !elementBeforeError.getText().contains(fillerVariableName)) ||
@@ -86,8 +175,9 @@ public class LiveAutoCompletion {
         }
 
         errorElement = PsiTreeUtil.findChildOfType(modifiedQuery, PsiErrorElement.class);
-        if (errorElement == null) {
-            this.repairedQuery = modifiedQuery.getText();
+        if (errorElement == null &&
+                PsiTreeUtil.getParentOfType(modifiedQuery.findElementAt(modifiedQuery.getText().indexOf(pofVariableName)),SparqlTriplesBlockImpl.class) != null ){
+            this.repairedQuery = modifiedQuery;
         }
     }
 
@@ -113,6 +203,8 @@ public class LiveAutoCompletion {
 
     @Nullable
     public String getRepairedQuery() {
-        return repairedQuery;
+        return repairedQuery.getText();
     }
+
+
 }

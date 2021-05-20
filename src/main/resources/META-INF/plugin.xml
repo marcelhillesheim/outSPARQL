@@ -77,6 +77,7 @@
                                 implementationClass="language.editor.completion.SparqlCompletionContributor"/>
         <lang.commenter language="Sparql" implementationClass="language.editor.SparqlCommenter"/>
         <lang.braceMatcher language="Sparql" implementationClass="language.editor.SparqlBraceMatcher"/>
+        <notificationGroup id="outSPARQL notifications" displayType="BALLOON"/>
     </extensions>
     <actions>
     </actions>
