@@ -70,12 +70,14 @@ public class LiveAutoCompletion {
         if (repairedQuery != null) {
             // only keep prologue and where class as we want to define our own query and solution modifiers
             String whereClause = Objects.requireNonNull(PsiTreeUtil.findChildOfType(repairedQuery, SparqlWhereClauseImpl.class)).getText();
+            // add filter for type IRI as it is a common IRI -> displaces other IRIs due to it's high occurrence
+            whereClause = whereClause.substring(0, whereClause.lastIndexOf('}')) +
+                    " FILTER (" + pofVariableName + "!= <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }";
+
             PsiElement prologueElement = PsiTreeUtil.findChildOfType(repairedQuery, SparqlPrologueImpl.class);
-            String prologue;
+            String prologue = "";
             if (prologueElement != null) {
                 prologue = prologueElement.getText();
-            } else {
-                prologue = "";
             }
             //TODO FROM
             String countVariableName = "?OutSparqlCount";
