@@ -6,6 +6,9 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -96,9 +99,12 @@ public class LiveAutoCompletion {
 
             displaySuggestions(execution.getResults(), completionResults,
                     jenaQuery.getPrefixMapping().withDefaultMappings(SparqlSettingsUtil.getStoredPrefixes()));
+        } else {
+            String message = "<html> This feature is in an early stage. Find more information about possible causes/problems " +
+                    "<a href=\"https://plugins.jetbrains.com/plugin/16503-outsparql/tutorial/auto-completion\">here.</a></html>";
+            new Notification("outSPARQL notifications", "OutSPARQL completion failed", message,
+                    NotificationType.INFORMATION, new NotificationListener.UrlOpeningListener(true)).notify(project);
         }
-            //TODO else: what if there is another error, which cant be resolved at caret position
-            //TODO inform user
     }
 
     private void displaySuggestions(ResultSet results, CompletionResultSet completionResults, PrefixMapping prefixMapping) {
