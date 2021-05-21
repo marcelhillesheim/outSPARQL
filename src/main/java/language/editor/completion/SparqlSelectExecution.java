@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 //TODO use the same class for SPARQL execution (toolwindow execution) as for live auto-completion !!!
 
-// execute query within backgroudnable task so the user can cancel the completion
+//TODO execute query within backgroudnable task so the user can cancel the completion
 // and is not stuck till the query is timed out in the worst case
 
 public class SparqlSelectExecution {
