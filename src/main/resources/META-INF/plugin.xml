@@ -13,8 +13,7 @@
         <li>[feature] Basic custom language support (parsing, highlighting) </li>
         <li>[feature] SPARQL execution of SELECT queries within the IDE</li>
         <li>[feature] Annotations and Quickfixes for Prefixes</li>
-        <li>[experimental] implementation of live auto-completion (
-        <a href="https://plugins.jetbrains.com/plugin/16503-outsparql/tutorial/auto-completion">info</a>)</li>
+        <li>[experimental] implementation of live auto-completion (<a href="https://plugins.jetbrains.com/plugin/16503-outsparql/tutorial/auto-completion">info</a>)</li>
       </ul>
     ]]></description>
 
@@ -26,7 +25,6 @@
         <li>[minor] Added brace matcher -> automatically closes braces</li>
         <li>[minor] Added commenter -> using shortcuts to comment out code</li>
       </ul>
-      <h3>v0.2.0</h3>
       <h3>v0.2.1</h3>
       minor changes
       <ul>
