@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import org.apache.jena.query.*;
 import org.jetbrains.annotations.Nullable;
 import settings.SparqlAppSettingsManager;
-import settings.SparqlSettingsUtil;
 
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +25,6 @@ public class SparqlSelectExecution {
 
     public SparqlSelectExecution(@Nullable Project project, Query jenaQuery) {
         this.project = project;
-        jenaQuery.setPrefixMapping(jenaQuery.getPrefixMapping().withDefaultMappings(SparqlSettingsUtil.getStandardPrefixes()));
         this.qexec = QueryExecutionFactory.sparqlService(
                 SparqlAppSettingsManager.getInstance().endpointSettingsForExecution.getUrl(),
                 jenaQuery

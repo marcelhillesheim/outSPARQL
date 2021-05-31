@@ -25,9 +25,7 @@ import org.apache.jena.datatypes.xsd.impl.RDFLangString;
 import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
 import org.apache.jena.datatypes.xsd.impl.XSDDouble;
 import org.apache.jena.graph.Node;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.*;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
@@ -105,7 +103,23 @@ public class LiveAutoCompletion {
                     + "} GROUP BY " + pofVariableName
                     + " ORDER BY DESC(" + countVariableName + ")";
 
-            Query jenaQuery = QueryFactory.create(finalQuery);
+
+            //TODO move to sparqlselect in later release
+            Query jenaQuery;
+            ParameterizedSparqlString queryStringParameterized = new ParameterizedSparqlString();
+            queryStringParameterized.setCommandText(finalQuery);
+            // adding common prefixes
+            // as jena doesnt accept a query with undefined prefixes even if the endpoint should know the prefix
+            queryStringParameterized.withDefaultMappings(SparqlSettingsUtil.getStandardPrefixes());
+            try {
+                jenaQuery = queryStringParameterized.asQuery();
+            } catch (QueryException e) {
+                String message = "Jena couldn't handle query: \n" + e.getMessage();
+                new Notification("outSPARQL notifications", "OutSPARQL completion failed", message,
+                        NotificationType.INFORMATION).notify(project);
+                e.printStackTrace();
+                return;
+            }
 
             SparqlSelectExecution execution = new SparqlSelectExecution(project, jenaQuery);
             execution.send();
