@@ -1,5 +1,6 @@
 package language.editor.completion;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
@@ -20,6 +21,9 @@ import language.SparqlElementFactory;
 import language.psi.impl.SparqlPrologueImpl;
 import language.psi.impl.SparqlTriplesBlockImpl;
 import language.psi.impl.SparqlWhereClauseImpl;
+import org.apache.jena.datatypes.xsd.impl.RDFLangString;
+import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
+import org.apache.jena.datatypes.xsd.impl.XSDDouble;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
@@ -35,7 +39,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-//TODO add link to live auto-completion white paper
+// auto-completion is based on live auto-completion approach http://ceur-ws.org/Vol-1272/paper_157.pdf
+// some alterations are implemented:
+// 1. added filter to avoid that the common "type"/"a" property displaces other more usefull suggestions
+
+//TODO cleanup ... transfer methods to select execution class
+//TODO use same select execution class for tool window execution!
+//TODO parameterize methods
+
 
 public class LiveAutoCompletion {
     private final String pofVariableName = "?OutSparqlPof";
@@ -118,29 +129,53 @@ public class LiveAutoCompletion {
         while (results.hasNext()) {
             Binding entry = results.nextBinding();
             Node value = entry.get(resultVar);
-            long count = Long.parseLong(entry.get(countVar).getLiteralValue().toString());
-            String label = "";
-            if(value.isURI()){
-                // if there is an abbreviated version of the IRI (prefix)
-                if (prefixMapping.qnameFor(value.getURI())!=null){
-                    label = prefixMapping.qnameFor(value.getURI());
-                } else {
-                    label = "<" + value.getURI() + ">";
-                }
-            } else if(value.isLiteral()){
-                label = value.getLiteral().toString();
-            } else if(value.isBlank()){
-                label = value.getBlankNodeLabel();
-            }
-            double priority = (double) count;
+            double priority = (double) Long.parseLong(entry.get(countVar).getLiteralValue().toString());
+
             temporaryList.add(
                     PrioritizedLookupElement.withPriority(
-                    LookupElementBuilder.create(label).withTypeText(Double.toString(priority)),
+                    LookupElementBuilder.create(nodeToLabel(value, prefixMapping)).withTypeText(Double.toString(priority)),
                     priority
                     )
             );
         }
         completionResults.addAllElements(temporaryList);
+    }
+
+    @VisibleForTesting
+    public static String nodeToLabel(Node node, PrefixMapping prefixMapping) {
+        String label = "";
+        if(node.isURI()){
+            // if there is an abbreviated version of the IRI (prefix)
+            if (prefixMapping.qnameFor(node.getURI())!=null){
+                label = prefixMapping.qnameFor(node.getURI());
+            } else {
+                label = "<" + node.getURI() + ">";
+            }
+        } else if(node.isLiteral()) {
+            if (node.getLiteralDatatype() instanceof RDFLangString) {
+                label = node.toString(true);
+            } else if (node.getLiteralDatatype() instanceof XSDBaseNumericType || node.getLiteralDatatype() instanceof XSDDouble) {
+                label = node.getLiteralLexicalForm();
+            } else if (node.getLiteralDatatypeURI().equals("http://www.w3.org/2001/XMLSchema#boolean")) {
+                if (node.getLiteralLexicalForm().equals("0")) {
+                    label = "false";
+                } else if (node.getLiteralLexicalForm().equals("1")) {
+                    label = "true";
+                }
+
+            } else {
+                label = "\"" + node.getLiteralLexicalForm() + "\"^^";
+                if (prefixMapping.qnameFor(node.getLiteralDatatypeURI())!=null){
+                    label = label + prefixMapping.qnameFor(node.getLiteralDatatypeURI());
+                } else {
+                    label = label + "<" + node.getLiteralDatatypeURI() + ">";
+                }
+            }
+
+        } else if(node.isBlank()){
+            label = node.getBlankNodeLabel();
+        }
+        return label;
     }
 
 
