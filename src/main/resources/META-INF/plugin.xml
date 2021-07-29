@@ -2,7 +2,7 @@
     <id>org.outsparql.outSPARQL</id>
     <!--suppress PluginXmlCapitalization -->
     <name>outSPARQL</name>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
     <vendor email="contact@marcelhillesheim.com" url="https://github.com/marcelhillesheim/outSPARQL">Marcel Hillesheim</vendor>
 
     <description><![CDATA[
@@ -18,6 +18,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v0.3.2</h3>
+      <ul>
+        <li>[fix] removed build limit to support 2021.2 and upcoming versions</li>
+      </ul>
       <h3>v0.3.1</h3>
       <ul>
         <li>[fix] added prefix support for live auto-completion</li>
