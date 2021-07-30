@@ -130,7 +130,7 @@ public class LiveAutoCompletion {
             String message = "<html> This feature is in an early stage. Find more information about possible causes/problems " +
                     "<a href=\"https://plugins.jetbrains.com/plugin/16503-outsparql/tutorial/auto-completion\">here.</a></html>";
             new Notification("outSPARQL notifications", "OutSPARQL completion failed", message,
-                    NotificationType.INFORMATION, new NotificationListener.UrlOpeningListener(true)).notify(project);
+                    NotificationType.INFORMATION).setListener(new NotificationListener.UrlOpeningListener(true)).notify(project);
         }
     }
 
