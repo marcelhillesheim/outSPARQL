@@ -2,7 +2,6 @@
     <id>org.outsparql.outSPARQL</id>
     <!--suppress PluginXmlCapitalization -->
     <name>outSPARQL</name>
-    <version>0.3.2</version>
     <vendor email="contact@marcelhillesheim.com" url="https://github.com/marcelhillesheim/outSPARQL">Marcel Hillesheim</vendor>
 
     <description><![CDATA[
