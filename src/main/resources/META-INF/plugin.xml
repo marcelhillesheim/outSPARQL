@@ -20,6 +20,7 @@
       <h3>v0.3.2</h3>
       <ul>
         <li>[fix] removed build limit to support 2021.2 and upcoming versions</li>
+        <li>[fix] resolved deprecated methods for future-proofing</li>
       </ul>
       <h3>v0.3.1</h3>
       <ul>
