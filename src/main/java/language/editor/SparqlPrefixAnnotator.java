@@ -37,26 +37,28 @@ public class SparqlPrefixAnnotator implements Annotator {
         }
 
         // annotate iri, if iri can be shortened with a prefix
-        // SparqlIri is already excluding Iris in Prologue
+        // SparqlIri instance is already excluding iris inside a Prologue
         if (element instanceof SparqlIri && element.getNode().getChildren(TokenSet.create(IRIREF)).length == 1) {
             String iri = element.getNode().getChildren(TokenSet.create(IRIREF))[0].getText().replaceAll("[<>]","");
             // trying to short with query prefix declarations and standard prefixes
             String prefixedName = SparqlPsiImplUtil.getPrefixMapping(element).withDefaultMappings(SparqlSettingsUtil.getStandardPrefixes()).qnameFor(iri);
-            if (prefixedName != null) {
-                holder.newAnnotation(
-                        HighlightSeverity.WEAK_WARNING, "The IRI can be shortened by " + prefixedName + ".")
-                        .withFix(new SparqlShortenIriQuickFix(prefixedName, element))
-                        .create();
-            } else {
-                // check if it can be shortened with non-standard prefix
+            HighlightSeverity highlightSeverity = HighlightSeverity.WEAK_WARNING;
+
+            // check if iri can be shortened with non-standard prefix
+            if (prefixedName == null) {
                 prefixedName = SparqlSettingsUtil.getStoredPrefixes().qnameFor(iri);
-                if(prefixedName != null) {
-                    holder.newAnnotation(
-                            HighlightSeverity.INFORMATION, "The IRI can be shortened by " + prefixedName + ".")
-                            .withFix(new SparqlShortenIriQuickFix(prefixedName, element))
-                            .create();
+                if (prefixedName == null) {
+                    return;
                 }
+                // in case of a non-standard prefix, the quickfix should be up to the users decision
+                // --> instead of a weak warning highlight as information
+                highlightSeverity = HighlightSeverity.INFORMATION;
             }
+
+            holder.newAnnotation(
+                    highlightSeverity, "The IRI can be shortened by " + prefixedName + ".")
+                    .withFix(new SparqlShortenIriQuickFix(prefixedName, element))
+                    .create();
         }
 
     }

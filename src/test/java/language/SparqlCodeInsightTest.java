@@ -18,13 +18,13 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
 
     public void testPrefixDeclarationMissingAnnotator() {
         @Language("Sparql")
-        String prefixDecl = "PREFIX existingPrefix: <testurl#> ";
-        @Language("Sparql")
         String query =
-                "SELECT ?a WHERE {\n" +
+                "PREFIX existingPrefix: <testurl#>\n" +
+                        "SELECT ?a WHERE {\n" +
                         "?a existingPrefix:test ?b." +
                         "?a missingPrefix:test ?c}";
-        myFixture.configureByText(SparqlFileType.INSTANCE, prefixDecl + query);
+
+        myFixture.configureByText(SparqlFileType.INSTANCE, query);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
         assertEquals(1, highlightInfos.stream()
                 .filter(highlightInfo -> "missingPrefix:test".equals(highlightInfo.getText()))
@@ -36,21 +36,22 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
         List<IntentionAction> allQuickFixes = myFixture.getAllQuickFixes();
         allQuickFixes.stream().filter(quickFix -> quickFix instanceof SparqlCreatePrefixDeclQuickFix).forEach(quickFix -> myFixture.launchAction(quickFix));
         myFixture.checkResult("PREFIX existingPrefix: <testurl#>\n" +
-                "PREFIX missingPrefix: <>SELECT ?a WHERE {\n" +
+                "PREFIX missingPrefix: <>\n" +
+                "SELECT ?a WHERE {\n" +
                 "?a existingPrefix:test ?b.?a missingPrefix:test ?c}");
 
     }
 
     // testing standard prefixes -> declaration is not necessary -> information tag instead of weak warning
     public void testPrefixDeclarationMissingAnnotatorStandardPrefix() {
-        SparqlAppSettingsManager.getInstance().prefixSettingsList.add(
-                new SparqlPrefixSettings("standardPrefix", "http://test.com", true)
-        );
-
         @Language("Sparql")
         String query =
                 "SELECT ?a WHERE {\n" +
                         "?a standardPrefix:test ?b. }";
+
+        SparqlAppSettingsManager.getInstance().prefixSettingsList.add(
+                new SparqlPrefixSettings("standardPrefix", "http://test.com", true)
+        );
 
         myFixture.configureByText(SparqlFileType.INSTANCE, query);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
@@ -69,23 +70,50 @@ public class SparqlCodeInsightTest extends BasePlatformTestCase {
 
     public void testShortenIriAnnotator() {
         @Language("Sparql")
-        String prefixDecl = "PREFIX existingPrefix: <testurl#> ";
-        @Language("Sparql")
         String query =
-                "SELECT ?a WHERE {\n" +
-                        "?a <testurl#local> ?b." +
-                        "?a <randomurl#local> ?c." +
-                        "?a existingPrefix:local ?d.}";
-        myFixture.configureByText(SparqlFileType.INSTANCE,prefixDecl + query);
+                "PREFIX existingPrefix: <testurl#>\n" +
+                        "SELECT ?a WHERE {\n" +
+                        "?a <testurl#local> ?b. \n" +
+                        "?a <standard.com/local> ?c.\n" +
+                        "?a <non-standard.com/local> ?d.\n" +
+                        "?a <randomurl#local> ?e.\n" +
+                        "?a existingPrefix:local ?f.}";
+
+        SparqlAppSettingsManager.getInstance().prefixSettingsList.add(
+                new SparqlPrefixSettings("standardPrefix", "standard.com/", true)
+        );
+        SparqlAppSettingsManager.getInstance().prefixSettingsList.add(
+                new SparqlPrefixSettings("non-standardPrefix", "non-standard.com/", false)
+        );
+
+        myFixture.configureByText(SparqlFileType.INSTANCE,query);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
-        assertEquals(1, highlightInfos.stream().filter(highlightInfo -> "<testurl#local>".equals(highlightInfo.getText())).count());
-        assertEquals(1, highlightInfos.size());
+
+        assertEquals(1, highlightInfos.stream()
+                .filter(highlightInfo -> "<testurl#local>".equals(highlightInfo.getText()))
+                .filter(highlightInfo -> highlightInfo.getSeverity().equals(HighlightSeverity.WEAK_WARNING))
+                .count());
+        assertEquals(1, highlightInfos.stream()
+                .filter(highlightInfo -> "<standard.com/local>".equals(highlightInfo.getText()))
+                .filter(highlightInfo -> highlightInfo.getSeverity().equals(HighlightSeverity.WEAK_WARNING))
+                .count());
+        assertEquals(1, highlightInfos.stream()
+                .filter(highlightInfo -> "<non-standard.com/local>".equals(highlightInfo.getText()))
+                .filter(highlightInfo -> highlightInfo.getSeverity().equals(HighlightSeverity.INFORMATION))
+                .count());
+
+        assertEquals(3, highlightInfos.size());
 
         // test quickfix
         List<IntentionAction> allQuickFixes = myFixture.getAllQuickFixes();
         allQuickFixes.stream().filter(quickFix -> quickFix instanceof SparqlShortenIriQuickFix).forEach(quickFix -> myFixture.launchAction(quickFix));
-        myFixture.checkResult("PREFIX existingPrefix: <testurl#> SELECT ?a WHERE {\n" +
-                "?a existingPrefix:local ?b.?a <randomurl#local> ?c.?a existingPrefix:local ?d.}");
+        myFixture.checkResult("PREFIX existingPrefix: <testurl#>\n" +
+                "SELECT ?a WHERE {\n" +
+                "?a existingPrefix:local ?b. \n" +
+                "?a standardPrefix:local ?c.\n" +
+                "?a non-standardPrefix:local ?d.\n" +
+                "?a <randomurl#local> ?e.\n" +
+                "?a existingPrefix:local ?f.}");
     }
 
     public void testCommenter() {
