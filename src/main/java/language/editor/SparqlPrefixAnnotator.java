@@ -16,23 +16,23 @@ public class SparqlPrefixAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         // annotate prefixedname, if prefix hasn't been declared within the query
+        // as some libraries require a prefix declaration even if the endpoint knows the prefix
+        // and as some endpoints simply don't know the prefix and need the prefix declaration to fulfill the query
         if (element instanceof SparqlPrefixedName){
             SparqlPrefixedName prefixedName = (SparqlPrefixedName) element;
-            // if not declared in query
+            // if prefix isn't declared within the query -> annotate
             if (SparqlPsiImplUtil.getPrefixMapping(prefixedName).getNsPrefixURI(prefixedName.getPrefix()) == null) {
-                // if its a standard prefix, give the option to add the prefix declaration
+
+                HighlightSeverity highlightSeverity = HighlightSeverity.WEAK_WARNING;
+                // if it's a standard prefix, a declaration isn't necessary as the endpoint is supposed to know the prefix
+                // Information tag --> no highlighting instead of weak warning
                 if (SparqlSettingsUtil.getStandardPrefixes().getNsPrefixURI(prefixedName.getPrefix()) != null) {
-                    holder.newAnnotation(
-                            HighlightSeverity.INFORMATION, "The prefix hasn't been declared within the query.")
-                            .withFix(new SparqlCreatePrefixDeclQuickFix(prefixedName.getPrefix()))
-                            .create();
-                    // if it is an unknown prefix or a non-standard prefix, highlight with warning
-                } else {
-                    holder.newAnnotation(
-                            HighlightSeverity.WEAK_WARNING, "The prefix hasn't been declared within the query.")
-                            .withFix(new SparqlCreatePrefixDeclQuickFix(prefixedName.getPrefix()))
-                            .create();
+                    highlightSeverity = HighlightSeverity.INFORMATION;
                 }
+                holder.newAnnotation(
+                        highlightSeverity, "The prefix hasn't been declared within the query.")
+                        .withFix(new SparqlCreatePrefixDeclQuickFix(prefixedName.getPrefix()))
+                        .create();
             }
         }
 
