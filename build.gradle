@@ -17,7 +17,7 @@ dependencies {
     testImplementation ('org.mockito:mockito-core:3.9.0')
 
 
-    implementation ('org.apache.jena:jena-arq:3.17.0'){ exclude group: 'org.slf4j' }
+    implementation ('org.apache.jena:jena-arq:4.1.0'){ exclude group: 'org.slf4j' }
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
