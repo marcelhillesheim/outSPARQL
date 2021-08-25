@@ -1,73 +1,86 @@
 package language.editor;
 
+import com.google.common.collect.Sets;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.formatter.common.AbstractBlock;
-import language.psi.impl.SparqlBaseDeclImpl;
-import language.psi.impl.SparqlPrefixDeclImpl;
-import language.psi.impl.SparqlPrologueImpl;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.util.containers.ContainerUtil;
+import language.psi.SparqlTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 public class SparqlBlock extends AbstractBlock {
 
-    //TODO add all block elements
-    //list contains all psi elements, which should have no other element within the same line
-    //e.g. only one prefix declaration per line
-    private final List<Class<?>> singleLineElements = Arrays.asList(
-            SparqlPrologueImpl.class, SparqlPrefixDeclImpl.class, SparqlBaseDeclImpl.class
+    private List<Block> blocks = null;
+
+    public static Set<IElementType> INDENT_PARENTS = Sets.newHashSet(
+            SparqlTypes.GROUP_GRAPH_PATTERN
     );
 
-    private final SpacingBuilder spacingBuilder;
+    private static final Set<IElementType> NO_INDENT_ELEMENT_TYPES = Sets.newHashSet(
+            SparqlTypes.OP_LCURLY,
+            SparqlTypes.OP_RCURLY,
+            SparqlTypes.OP_LROUND,
+            SparqlTypes.OP_RROUND,
+            SparqlTypes.OP_LSQUARE,
+            SparqlTypes.OP_RSQUARE
+    );
 
-    protected SparqlBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, SpacingBuilder spacingBuilder) {
+    public SparqlBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
         super(node, wrap, alignment);
-        this.spacingBuilder = spacingBuilder;
     }
 
     @Override
     protected List<Block> buildChildren() {
-        List<Block> blocks = new ArrayList<>();
-        ASTNode child = myNode.getFirstChildNode();
-        while (child != null) {
-            if (child.getElementType() != TokenType.WHITE_SPACE) {
-                Block block = new SparqlBlock(child, Wrap.createWrap(WrapType.NONE, false), Alignment.createAlignment(),
-                        spacingBuilder);
-                blocks.add(block);
-            }
-            child = child.getTreeNext();
+        if (blocks == null) {
+            blocks = ContainerUtil.mapNotNull(myNode.getChildren(null), node -> {
+                if (node.getTextLength() == 0) {
+                    return null;
+                }
+                if (node.getElementType() == TokenType.WHITE_SPACE) {
+                    return null;
+                }
+                return new SparqlBlock(node, null, null);
+            });
         }
         return blocks;
     }
 
     @Override
     public Indent getIndent() {
+        if (NO_INDENT_ELEMENT_TYPES.contains(myNode.getElementType())) {
+            return Indent.getNoneIndent();
+        }
+        final ASTNode treeParent = myNode.getTreeParent();
+        if (treeParent != null) {
+            if (INDENT_PARENTS.contains(treeParent.getElementType())) {
+                return Indent.getNormalIndent();
+            }
+        }
+        return Indent.getNoneIndent();
+    }
+
+    @Nullable
+    @Override
+    protected Indent getChildIndent() {
+        final IElementType elementType = myNode.getElementType();
+        if (INDENT_PARENTS.contains(elementType)) {
+            return Indent.getNormalIndent();
+        }
         return Indent.getNoneIndent();
     }
 
     @Nullable
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
-        if (child1 instanceof ASTBlock && child2 instanceof ASTBlock) {
-            final PsiElement element1 = Objects.requireNonNull(((ASTBlock) child1).getNode()).getPsi();
-            final PsiElement element2 = Objects.requireNonNull(((ASTBlock) child2).getNode()).getPsi();
-
-            // add newline before and after element
-            if (singleLineElements.contains(element1.getClass()) || singleLineElements.contains(element2.getClass())) {
-                return Spacing.createSpacing(0,0,1,true,0);
-            }
-
-
-        }
-
-        return spacingBuilder.getSpacing(this, child1, child2);
+        return null;
     }
 
-    @Override
     public boolean isLeaf() {
         return myNode.getFirstChildNode() == null;
     }
