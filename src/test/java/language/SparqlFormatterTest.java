@@ -24,11 +24,8 @@ public class SparqlFormatterTest extends FormatterTestCase {
         doTest(testName + "." + getFileExtension(), testName + "_after." + getFileExtension(), resultNumber);
     }
 
-    public void testIndentWhereClause1() throws Exception {
-        doTest();
-    }
+    public void testIndentWhereClause1() throws Exception { doTest(); }
+    public void testIndentWhereClause2() throws Exception { doTest(); }
 
-    public void testIndentWhereClause2() throws Exception {
-        doTest();
-    }
+    public void testSpacingPrologue() throws Exception { doTest(); }
 }

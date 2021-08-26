@@ -1,0 +1,2 @@
+BASE <base.com>PREFIX test: <test.com>PREFIX test2: <test2.com>PREFIX test3: <test3.com>SELECT * WHERE {
+                                                                                        ?a ?b ?c}
