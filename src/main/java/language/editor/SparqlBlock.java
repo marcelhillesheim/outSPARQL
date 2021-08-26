@@ -31,6 +31,12 @@ public class SparqlBlock extends AbstractBlock {
             SparqlTypes.OP_RSQUARE
     );
 
+    private static final Set<IElementType> SINGLE_LINE_ELEMENT_TYPES = Sets.newHashSet(
+            SparqlTypes.PROLOGUE,
+            SparqlTypes.PREFIX_DECL,
+            SparqlTypes.BASE_DECL
+    );
+
     public SparqlBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
         super(node, wrap, alignment);
     }
@@ -78,6 +84,14 @@ public class SparqlBlock extends AbstractBlock {
     @Nullable
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
+        ASTBlock sparqlBlock1 = (ASTBlock) child1;
+
+        if (sparqlBlock1 != null &&
+                sparqlBlock1.getNode() != null &&
+                SINGLE_LINE_ELEMENT_TYPES.contains(sparqlBlock1.getNode().getElementType())
+        ) {
+            return Spacing.createSpacing(0, 0, 1, true, 0);
+        }
         return null;
     }
 
