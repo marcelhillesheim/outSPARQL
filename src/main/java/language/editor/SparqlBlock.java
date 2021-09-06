@@ -19,13 +19,17 @@ public class SparqlBlock extends AbstractBlock {
     private List<Block> blocks = null;
 
     public static Set<IElementType> INDENT_PARENTS = Sets.newHashSet(
-            SparqlTypes.GROUP_GRAPH_PATTERN
+            SparqlTypes.GROUP_GRAPH_PATTERN,
+            SparqlTypes.QUAD_DATA,
+            SparqlTypes.QUAD_PATTERN,
+            SparqlTypes.CONSTRUCT_TEMPLATE
     );
 
     private static final Set<IElementType> NO_INDENT_ELEMENT_TYPES = Sets.newHashSet(
             SparqlTypes.OP_LCURLY,
             SparqlTypes.OP_RCURLY,
-            SparqlTypes.OP_LROUND,
+            //removed for inline data / values clause
+            //SparqlTypes.OP_LROUND,
             SparqlTypes.OP_RROUND,
             SparqlTypes.OP_LSQUARE,
             SparqlTypes.OP_RSQUARE
@@ -64,9 +68,21 @@ public class SparqlBlock extends AbstractBlock {
         }
         final ASTNode treeParent = myNode.getTreeParent();
         if (treeParent != null) {
-            if (INDENT_PARENTS.contains(treeParent.getElementType())) {
-                return Indent.getNormalIndent();
-            }
+            if (INDENT_PARENTS.contains(treeParent.getElementType())) return Indent.getNormalIndent();
+            // custom cases for rules with additional elements, which shouldn't have an indent
+            if (treeParent.getElementType() == SparqlTypes.CONSTRUCT_QUERY &&
+                myNode.getElementType() == SparqlTypes.TRIPLES_TEMPLATE
+            ) return Indent.getNormalIndent();
+            if (treeParent.getElementType() == SparqlTypes.QUADS_NOT_TRIPLES &&
+                    myNode.getElementType() == SparqlTypes.TRIPLES_TEMPLATE
+            ) return Indent.getNormalIndent();
+            if (treeParent.getElementType() == SparqlTypes.INLINE_DATA_ONE_VAR &&
+                    myNode.getElementType() == SparqlTypes.DATA_BLOCK_VALUE
+            ) return Indent.getNormalIndent();
+            if (treeParent.getElementType() == SparqlTypes.INLINE_DATA_FULL &&
+                    (myNode.getElementType() == SparqlTypes.DATA_BLOCK_VALUE ||
+                            myNode.getElementType() == SparqlTypes.OP_LROUND)
+            ) return Indent.getNormalIndent();
         }
         return Indent.getNoneIndent();
     }

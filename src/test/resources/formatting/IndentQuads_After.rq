@@ -1,0 +1,16 @@
+INSERT DATA {
+    # Quads
+
+    # TriplesTemplate
+    ?a ?b ?c.
+    ?a ?d ?e.
+
+    # QuadsNotTriples
+    GRAPH ?a {?a ?f ?g}.
+
+    ?a ?h ?i.
+    GRAPH ?a {
+        ?a ?f ?g
+    }
+    ?a ?h ?i.
+}

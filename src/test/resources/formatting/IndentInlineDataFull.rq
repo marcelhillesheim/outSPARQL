@@ -1,0 +1,7 @@
+PREFIX dm: <http://learningsparql.com/ns/demo#>
+SELECT * WHERE {
+VALUES (?color ?direction) {
+( dm:red  "north" )
+( dm:blue  "west" )
+}
+}

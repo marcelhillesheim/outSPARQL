@@ -26,6 +26,9 @@ public class SparqlFormatterTest extends FormatterTestCase {
 
     public void testIndentWhereClause1() throws Exception { doTest(); }
     public void testIndentWhereClause2() throws Exception { doTest(); }
+    public void testIndentQuads() throws Exception { doTest(); }
+    public void testIndentInlineDataOneVar() throws Exception { doTest(); }
+    public void testIndentInlineDataFull() throws Exception { doTest(); }
 
     public void testSpacingPrologue() throws Exception { doTest(); }
 }

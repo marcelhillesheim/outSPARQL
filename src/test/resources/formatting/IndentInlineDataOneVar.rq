@@ -1,0 +1,6 @@
+SELECT * WHERE {
+VALUES ?direction {
+"north"
+"west"
+}
+}
