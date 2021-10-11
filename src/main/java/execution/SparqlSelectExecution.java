@@ -81,10 +81,17 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         // checking if user canceled query
         while (t.isAlive()) {
             if (indicator.isCanceled()){
+                System.out.println("canceled");
+                synchronized (t) {
+                    try {
+                        t.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                synchronized (t) { qexec.abort(); }
+                synchronized (t) { t.notify(); }
                 updateTextArea("Query got canceled.", true);
-                qexec.abort();
-                qexec.close();
-                return;
             }
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
@@ -93,7 +100,10 @@ public class SparqlSelectExecution extends Task.Backgroundable {
             }
 
         }
-        if (results == null) return;
+        if (results == null) {
+            qexec.close();
+            return;
+        }
         JBTable resultTable = new JBTable(generateTable());
         ApplicationManager.getApplication().invokeLater(() -> queryExecutionToolWindow.setContent(new JScrollPane(resultTable)), ModalityState.any());
 
