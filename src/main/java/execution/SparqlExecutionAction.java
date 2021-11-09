@@ -1,6 +1,8 @@
 package execution;
 
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
@@ -11,6 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.content.Content;
+import com.intellij.util.messages.MessageBus;
 import language.SparqlFileType;
 import language.psi.SparqlQuery;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +44,9 @@ public class SparqlExecutionAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        MessageBus messageBus = Objects.requireNonNull(e.getProject()).getMessageBus();
+        SparqlExecutionStateNotifier publisher = messageBus.syncPublisher(SparqlExecutionStateNotifier.SPARQL_EXECUTION_STATE);
+        
         // getting toolWindow to display results
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject()));
         ToolWindow window = toolWindowManager.getToolWindow(QueryExecutionToolWindow.WINDOW_ID);
@@ -63,11 +69,11 @@ public class SparqlExecutionAction extends AnAction {
             }
         }
         if (currentFile == null) {
-            queryExecutionToolWindow.updateTextArea("Couldn't find any SPARQL file. " +
+            publisher.updateState("Couldn't find any SPARQL file. " +
                     "Please make sure the editor with the SPARQL file is visible. " +
                     "Alternatively place your cursor inside of the SPARQL file. ", true);
         } else {
-            queryExecutionToolWindow.updateTextArea("SPARQL query from file " + currentFile.getName() + " will be executed. ");
+            publisher.updateState("SPARQL query from file " + currentFile.getName() + " will be executed. ", false);
         }
 
         //TODO SPARQL UPDATE
@@ -75,7 +81,7 @@ public class SparqlExecutionAction extends AnAction {
         //checking type of SPARQL query
         SparqlQuery queryElement = PsiTreeUtil.findChildOfType(Objects.requireNonNull(currentFile).getNode().getPsi(), SparqlQuery.class);
         if (queryElement == null) {
-            queryExecutionToolWindow.updateTextArea("Couldn't find PSI element SPARQL Query. ", true);
+            publisher.updateState("Couldn't find PSI element SPARQL Query. ", true);
         }else if (Objects.requireNonNull(queryElement).getSelectQuery() != null){
             SparqlSelectExecution exec = new SparqlSelectExecution(e.getProject(), "Query execution",currentFile.getOriginalFile().getNode().getPsi().getText(),
                     endpointSettings.getUrl(), SparqlAppSettingsManager.getInstance().limitForExecution, queryExecutionToolWindow);
@@ -83,16 +89,11 @@ public class SparqlExecutionAction extends AnAction {
             ProgressManager.getInstance().runProcessWithProgressAsynchronously(exec, processIndicator);
         } else {
             //TODO UPDATE text if more query types are supported
-            queryExecutionToolWindow.updateTextArea("Plugin can't handle this type of SPARQL query. " +
+            publisher.updateState("Plugin can't handle this type of SPARQL query. " +
                     "At the moment only SELECT queries are supported. ", true);
         }
 
-
-
-
-
     }
-
 
 }
 

@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.table.JBTable;
+import com.intellij.util.messages.MessageBus;
 import org.apache.jena.query.*;
 import org.jetbrains.annotations.NotNull;
 import settings.SparqlSettingsUtil;
@@ -27,6 +28,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
     private ResultSet results;
     private Query jenaQuery;
     private String[][] data;
+    private final SparqlExecutionStateNotifier publisher;
 
     public SparqlSelectExecution(Project project, @NotNull String title, String queryString, String endpointUrl, String limit, QueryExecutionToolWindow queryExecutionToolWindow) {
         super(project, title);
@@ -34,12 +36,15 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         this.endpointUrl = endpointUrl;
         this.limit =limit;
         this.queryExecutionToolWindow = queryExecutionToolWindow;
+
+        MessageBus messageBus = project.getMessageBus();
+        this.publisher = messageBus.syncPublisher(SparqlExecutionStateNotifier.SPARQL_EXECUTION_STATE);
     }
 
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(true);
-        updateTextArea("Sending query to " + endpointUrl + " endpoint:", false);
+        publisher.updateState("Sending query to " + endpointUrl + " endpoint:", false);
         ParameterizedSparqlString queryStringParameterized = new ParameterizedSparqlString();
         queryStringParameterized.setCommandText(queryString);
         // adding common prefixes
@@ -48,7 +53,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         try {
             this.jenaQuery = queryStringParameterized.asQuery();
         } catch (QueryParseException e) {
-            updateTextArea("The query execution is handled by jena. The query couldn't be parsed by jena.\n" +
+            publisher.updateState("The query execution is handled by jena. The query couldn't be parsed by jena.\n" +
                     e.getMessage(), true);
             return;
         }
@@ -58,7 +63,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         } else if (limit.matches("[0-9]+")) {
             jenaQuery.setLimit(Integer.parseInt(limit));
         }
-        updateTextArea(jenaQuery.toString(), false);
+        publisher.updateState(jenaQuery.toString(), false);
 
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, jenaQuery);
         //TODO use config values
@@ -68,7 +73,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
             try {
                 results = qexec.execSelect();
             } catch (Exception e) {
-                updateTextArea(e.getMessage(), true);
+                publisher.updateState(e.getMessage(), true);
                 if (qexec != null) {
                     qexec.close();
                 }
@@ -91,7 +96,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
                 }
                 synchronized (t) { qexec.abort(); }
                 synchronized (t) { t.notify(); }
-                updateTextArea("Query got canceled.", true);
+                publisher.updateState("Query got canceled.", true);
             }
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
@@ -134,10 +139,6 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         this.data = dataList.stream().map(u -> u.toArray(new String[0])).toArray(String[][]::new);
 
         return new DefaultTableModel(data, columnNames);
-    }
-
-    private void updateTextArea(String information, Boolean isErrorMessage){
-        ApplicationManager.getApplication().invokeLater(() -> queryExecutionToolWindow.updateTextArea(information, isErrorMessage), ModalityState.any());
     }
 
     public String[][] getData() {

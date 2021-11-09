@@ -2,13 +2,19 @@ package ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
 import execution.SparqlExecutionAction;
 import execution.SparqlExecutionEndpointAction;
 import execution.SparqlExecutionLimitSliderAction;
+import execution.SparqlExecutionStateNotifier;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -21,7 +27,7 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
     public static final String WINDOW_ID = "SPARQL";
     private JTextPane textPane;
 
-    public QueryExecutionToolWindow(ToolWindow toolWindow) {
+    public QueryExecutionToolWindow(ToolWindow toolWindow, Project project) {
         super(true, true);
 
         // Intellij style toolbar with actions attached
@@ -36,10 +42,18 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
         setContent(new JScrollPane());
 
         resetTextArea();
-    }
 
-    public void updateTextArea( String information ) {
-        updateTextArea( information , false);
+
+        MessageBus messageBus = project.getMessageBus();
+        MessageBusConnection connection = messageBus.connect();
+        connection.subscribe(
+                SparqlExecutionStateNotifier.SPARQL_EXECUTION_STATE,
+                (message, isErrorMessage) -> ApplicationManager.getApplication().invokeLater(
+                        () -> updateTextArea(message, isErrorMessage),
+                        ModalityState.any()
+                )
+
+        );
     }
 
     public void updateTextArea( String information, Boolean isErrorMessage) {
