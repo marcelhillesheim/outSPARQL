@@ -14,10 +14,10 @@ sourceSets.main.java.srcDirs 'src/main/gen'
 
 dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation ('org.mockito:mockito-core:3.9.0')
+    testImplementation ('org.mockito:mockito-core:4.0.0')
 
 
-    implementation ('org.apache.jena:jena-arq:4.1.0'){ exclude group: 'org.slf4j' }
+    implementation ('org.apache.jena:jena-arq:4.2.0'){ exclude group: 'org.slf4j' }
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
