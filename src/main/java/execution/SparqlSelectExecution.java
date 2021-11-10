@@ -74,6 +74,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
                 results = qexec.execSelect();
             } catch (Exception e) {
                 publisher.updateState(e.getMessage(), true);
+                //noinspection ConstantConditions
                 if (qexec != null) {
                     qexec.close();
                 }

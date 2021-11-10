@@ -55,16 +55,19 @@ public class SparqlParserDefinition implements ParserDefinition {
         return new SparqlParser();
     }
 
+    @NotNull
     @Override
     public IFileElementType getFileNodeType() {
         return FILE;
     }
 
+    @NotNull
     @Override
-    public PsiFile createFile(FileViewProvider viewProvider) {
+    public PsiFile createFile(@NotNull FileViewProvider viewProvider) {
         return new SparqlFile(viewProvider);
     }
 
+    @NotNull
     @Override
     public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
         return SpaceRequirements.MAY;

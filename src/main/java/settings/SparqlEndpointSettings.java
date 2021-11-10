@@ -9,8 +9,6 @@ public class SparqlEndpointSettings {
 
     }
 
-    public SparqlEndpointSettings(String name) { this.name = name; }
-
     // for combobox label
     @Override
     public String toString() {

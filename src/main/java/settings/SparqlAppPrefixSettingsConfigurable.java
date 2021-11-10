@@ -9,7 +9,6 @@ import javax.swing.*;
 
 public class SparqlAppPrefixSettingsConfigurable implements Configurable {
     private static final String TEXT_DISPLAY_NAME = "Prefix Settings";
-    private SparqlPrefixSettingsDialog dialog;
 
     @Nls
     @Override
@@ -19,7 +18,7 @@ public class SparqlAppPrefixSettingsConfigurable implements Configurable {
 
     @Override
     public @Nullable JComponent createComponent() {
-        this.dialog = new SparqlPrefixSettingsDialog();
+        SparqlPrefixSettingsDialog dialog = new SparqlPrefixSettingsDialog();
         return (dialog.getRootPanel());
     }
 

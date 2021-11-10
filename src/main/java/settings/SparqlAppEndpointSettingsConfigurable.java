@@ -8,7 +8,6 @@ import ui.SparqlEndpointSettingsDialog;
 import javax.swing.*;
 
 public class SparqlAppEndpointSettingsConfigurable implements Configurable {
-    private SparqlEndpointSettingsDialog dialog;
     private static final String TEXT_DISPLAY_NAME = "Endpoint Settings";
 
     @Nls
@@ -19,7 +18,7 @@ public class SparqlAppEndpointSettingsConfigurable implements Configurable {
 
     @Override
     public @Nullable JComponent createComponent() {
-        dialog = new SparqlEndpointSettingsDialog();
+        SparqlEndpointSettingsDialog dialog = new SparqlEndpointSettingsDialog();
         return dialog.getRootPanel();
     }
 

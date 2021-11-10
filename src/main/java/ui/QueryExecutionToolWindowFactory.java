@@ -16,7 +16,7 @@ public class QueryExecutionToolWindowFactory implements ToolWindowFactory {
      * @param toolWindow current tool window
      */
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        QueryExecutionToolWindow myToolWindow = new QueryExecutionToolWindow(toolWindow, project);
+        QueryExecutionToolWindow myToolWindow = new QueryExecutionToolWindow(project);
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(myToolWindow.getComponent(), "", false);

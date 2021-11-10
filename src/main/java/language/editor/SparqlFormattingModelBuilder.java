@@ -1,8 +1,6 @@
 package language.editor;
 
 import com.intellij.formatting.*;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import language.SparqlLanguage;
 import org.jetbrains.annotations.NotNull;
 
 

@@ -19,7 +19,7 @@ public class SparqlCompletionContributor extends CompletionContributor {
                     public void addCompletions(@NotNull CompletionParameters parameters,
                                                @NotNull ProcessingContext context,
                                                @NotNull CompletionResultSet resultSet) {
-                        LiveAutoCompletion completion = new LiveAutoCompletion(parameters, resultSet);
+                        new LiveAutoCompletion(parameters, resultSet);
                     }
                 }
         );

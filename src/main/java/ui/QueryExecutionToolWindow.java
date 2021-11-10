@@ -6,7 +6,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.messages.MessageBus;
@@ -27,7 +26,7 @@ public class QueryExecutionToolWindow extends SimpleToolWindowPanel {
     public static final String WINDOW_ID = "SPARQL";
     private JTextPane textPane;
 
-    public QueryExecutionToolWindow(ToolWindow toolWindow, Project project) {
+    public QueryExecutionToolWindow(Project project) {
         super(true, true);
 
         // Intellij style toolbar with actions attached
