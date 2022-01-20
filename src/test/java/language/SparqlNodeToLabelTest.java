@@ -10,9 +10,13 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static junit.framework.TestCase.assertEquals;
 
 
 @RunWith(Parameterized.class)
@@ -99,7 +103,6 @@ public class SparqlNodeToLabelTest {
         assert results != null;
         Binding entry = results.nextBinding();
         String result = LiveAutoCompletion.nodeToLabel(entry.get(Var.alloc("var")), prefixMapping);
-        System.out.println(result);
-        assert expected.equals(result);
+        assertEquals(expected, result);
     }
 }

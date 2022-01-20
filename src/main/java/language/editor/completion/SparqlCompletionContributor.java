@@ -9,6 +9,9 @@ import com.intellij.util.ProcessingContext;
 import language.psi.impl.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class SparqlCompletionContributor extends CompletionContributor {
 
     public SparqlCompletionContributor() {
@@ -64,20 +67,15 @@ public class SparqlCompletionContributor extends CompletionContributor {
                                 ) == null
                                 )
                         ){
-                            resultSet.addElement(LookupElementBuilder.create("SELECT"));
-                            resultSet.addElement(LookupElementBuilder.create("ASK"));
-                            resultSet.addElement(LookupElementBuilder.create("CONSTRUCT"));
-                            resultSet.addElement(LookupElementBuilder.create("DESCRIBE"));
+                            String[] queryClauseKW = {"SELECT", "ASK", "CONSTRUCT", "DESCRIBE"};
+                            String[] updateKW = {"LOAD", "CLEAR", "DROP", "ADD", "MOVE", "COPY", "CREATE", "WITH"};
 
-                            // update
-                            resultSet.addElement(LookupElementBuilder.create("LOAD"));
-                            resultSet.addElement(LookupElementBuilder.create("CLEAR"));
-                            resultSet.addElement(LookupElementBuilder.create("DROP"));
-                            resultSet.addElement(LookupElementBuilder.create("ADD"));
-                            resultSet.addElement(LookupElementBuilder.create("MOVE"));
-                            resultSet.addElement(LookupElementBuilder.create("COPY"));
-                            resultSet.addElement(LookupElementBuilder.create("CREATE"));
-                            resultSet.addElement(LookupElementBuilder.create("WITH"));
+                            resultSet.addAllElements(
+                                    Arrays.stream(queryClauseKW).map(LookupElementBuilder::create).collect(Collectors.toList())
+                            );
+                            resultSet.addAllElements(
+                                    Arrays.stream(updateKW).map(LookupElementBuilder::create).collect(Collectors.toList())
+                            );
                         }
                     }
                 }

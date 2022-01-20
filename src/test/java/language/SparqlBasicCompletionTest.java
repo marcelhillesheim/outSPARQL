@@ -71,19 +71,10 @@ public class SparqlBasicCompletionTest extends LightJavaCodeInsightFixtureTestCa
         List<String> lookupElementStrings = myFixture.getLookupElementStrings();
         assert lookupElementStrings != null;
 
-        System.out.println("Actual: " + lookupElementStrings);
-        System.out.println("Expected: " + expected);
+        Set<String> expectedSet = new HashSet<>(expected);
+        Set<String> actualSet = new HashSet<>(lookupElementStrings);
 
-
-        HashSet<String> unexpected = new HashSet<>(lookupElementStrings);
-        unexpected.removeAll(new HashSet<>(expected));
-        System.out.println("Didn't expect: " + unexpected);
-
-        HashSet<String> missing = new HashSet<>(expected);
-        missing.removeAll(new HashSet<>(lookupElementStrings));
-        System.out.println("Missing: " + missing);
-
-        assert(new HashSet<>(lookupElementStrings).equals(new HashSet<>(expected)));
+        assertEquals(expectedSet, actualSet);
 
     }
 
