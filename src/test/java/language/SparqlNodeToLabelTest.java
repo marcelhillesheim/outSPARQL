@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,13 +91,9 @@ public class SparqlNodeToLabelTest {
                 input +
                 " }} ] } }";
 
-        ResultSet results = null;
-        try {
-            InputStream targetStream = IOUtils.toInputStream(jsonString,"UTF-8");
-            results = ResultSetFactory.fromJSON(targetStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ResultSet results;
+        InputStream targetStream = IOUtils.toInputStream(jsonString,"UTF-8");
+        results = ResultSetFactory.fromJSON(targetStream);
 
         assert results != null;
         Binding entry = results.nextBinding();

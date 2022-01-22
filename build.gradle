@@ -1,6 +1,8 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.1.3'
+
+    //https://github.com/JetBrains/gradle-intellij-plugin
+    id 'org.jetbrains.intellij' version '1.3.0'
 }
 
 group 'org.outsparql'
@@ -13,16 +15,20 @@ repositories {
 sourceSets.main.java.srcDirs 'src/main/gen'
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
+    testCompileOnly 'junit:junit:4.13.2'
+
     testImplementation ('org.mockito:mockito-core:4.0.0')
 
-
+    // Release notes: https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=-3&styleName=Html&projectId=12311220
     implementation ('org.apache.jena:jena-arq:4.2.0'){ exclude group: 'org.slf4j' }
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version = '2021.2.1'
+    version = '2021.3.1'
     plugins = ['com.intellij.java']
 }
 
@@ -30,7 +36,7 @@ intellij {
 //https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=DG,PS,DL,MPS,MPSIIP,RDCPPP,WS,AC,IIC,IIE,GO,CL,PCD,PCC,RD,PCE,IIU,RM,PCP
 //https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=IIC,IIU
 runPluginVerifier {
-    ideVersions = ["2020.3.1", "2021.2.1"]
+    ideVersions = ["2020.3.1", "2021.3.1"]
 }
 
 patchPluginXml {
@@ -39,4 +45,8 @@ patchPluginXml {
     version = '0.3.3'
     sinceBuild = '203.6682.168'
     untilBuild = ''
+}
+
+test {
+    useJUnitPlatform()
 }
