@@ -22,4 +22,22 @@ public class SparqlSmartCompletionTest extends LightJavaCodeInsightFixtureTestCa
         assertFalse(lookupElementStrings.isEmpty());
 
     }
+
+    public void testTimeOut() {
+
+        String querySelect = "SELECT ?a {" +
+                "?a ?b ?c." +
+                "?c ?d ?e." +
+                "?f ?g ?h." +
+                "?h ?a <caret>}";
+        myFixture.configureByText(SparqlFileType.INSTANCE, querySelect);
+        SparqlAppSettingsManager.getInstance().endpointSettingsForExecution.setUrl("http://dbpedia.org/sparql");
+
+        myFixture.complete(CompletionType.SMART);
+        List<String> lookupElementStrings = myFixture.getLookupElementStrings();
+        System.out.println(lookupElementStrings);
+        assert lookupElementStrings != null;
+        assertTrue(lookupElementStrings.isEmpty());
+
+    }
 }

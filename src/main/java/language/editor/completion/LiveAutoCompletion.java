@@ -137,7 +137,7 @@ public class LiveAutoCompletion {
     private void displaySuggestions(ResultSet results, CompletionResultSet completionResults, PrefixMapping prefixMapping) {
         List<LookupElement> temporaryList = new ArrayList<>();
 
-        assert results != null;
+        if (results == null) return;
         Var resultVar = Var.alloc(results.getResultVars().get(0));
         Var countVar = Var.alloc(results.getResultVars().get(1));
         while (results.hasNext()) {
