@@ -16,8 +16,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SparqlSelectExecution extends Task.Backgroundable {
@@ -27,6 +27,7 @@ public class SparqlSelectExecution extends Task.Backgroundable {
     private final QueryExecutionToolWindow queryExecutionToolWindow;
     private ResultSet results;
     private Query jenaQuery;
+    private List<String> columnNames;
     private String[][] data;
     private final SparqlExecutionStateNotifier publisher;
 
@@ -116,33 +117,40 @@ public class SparqlSelectExecution extends Task.Backgroundable {
         qexec.close();
     }
 
+    //TODO overhaul this method to make it robust
     public TableModel generateTable(){
         //Processing endpoint response
-        String[] columnNames = Arrays.copyOf(results.getResultVars().toArray(), results.getResultVars().toArray().length, String[].class);
+        this.columnNames = results.getResultVars();
 
         //iterating through each row
-        ArrayList<ArrayList<String>> dataList = new ArrayList<>();
+        ArrayList<String[]> dataList = new ArrayList<>();
         while (results.hasNext()) {
             QuerySolution solution = results.next();
 
-            ArrayList<String> row = new ArrayList<>();
+            String[] row = new String[columnNames.size()];
 
             for (Iterator<String> iterator = solution.varNames(); iterator.hasNext(); ) {
-                String field = solution.get(iterator.next()).toString();
+                String columnName = iterator.next();
+                String field = solution.get(columnName).toString();
                 field = jenaQuery.getPrefixMapping().shortForm(field);
                 field = SparqlSettingsUtil.getStoredPrefixes().shortForm(field);
-                row.add(field);
+
+                row[columnNames.indexOf(columnName)] = field;
 
             }
             dataList.add(row);
         }
 
-        this.data = dataList.stream().map(u -> u.toArray(new String[0])).toArray(String[][]::new);
+        this.data = dataList.toArray(String[][]::new);
 
-        return new DefaultTableModel(data, columnNames);
+        return new DefaultTableModel(data, results.getResultVars().toArray());
     }
 
     public String[][] getData() {
-        return data;
+        return this.data;
+    }
+
+    public List<String> getColumnNames() {
+        return this.columnNames;
     }
 }
