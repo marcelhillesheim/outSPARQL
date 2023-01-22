@@ -33,16 +33,17 @@ intellij {
 }
 
 
-//https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=DG,PS,DL,MPS,MPSIIP,RDCPPP,WS,AC,IIC,IIE,GO,CL,PCD,PCC,RD,PCE,IIU,RM,PCP
-//https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=IIC,IIU
+// https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=DG,PS,DL,MPS,MPSIIP,RDCPPP,WS,AC,IIC,IIE,GO,CL,PCD,PCC,RD,PCE,IIU,RM,PCP
+// https://data.services.jetbrains.com/products?fields=code,name,releases.downloads,releases.version,releases.build,releases.type&code=IIC,IIU
+// https://jb.gg/intellij-platform-builds-list
 runPluginVerifier {
-    ideVersions = ["2020.3.1", "2021.3.1"]
+    ideVersions = ["2020.3.1", "2022.3.2"]
 }
 
 patchPluginXml {
 
     //  2020.1.4 (build 201.8743.12),
-    version = '0.3.3'
+    version = '0.4.0'
     sinceBuild = '203.6682.168'
     untilBuild = ''
 }

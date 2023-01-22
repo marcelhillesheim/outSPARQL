@@ -17,6 +17,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v0.4.0</h3>
+      <ul>
+        <li>[fix] CRITICAL ISSUE: Mismatch of data and column name in execution window</li>
+      </ul>
       <h3>v0.3.3</h3>
       <ul>
         <li>[fix] Adjusted formatting for content surrounded by braces
